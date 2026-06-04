@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Learn Greek Alphabet</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue: #2563eb;
+      --blue-light: #dbeafe;
+      --blue-dark: #1d4ed8;
+      --green: #16a34a;
+      --green-light: #dcfce7;
+      --red: #dc2626;
+      --red-light: #fee2e2;
+      --yellow: #ca8a04;
+      --yellow-light: #fef9c3;
+      --gray-50: #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-400: #9ca3af;
+      --gray-600: #4b5563;
+      --gray-800: #1f2937;
+      --gray-900: #111827;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--gray-50);
+      color: var(--gray-900);
+      min-height: 100vh;
+    }
+
+    header {
+      background: white;
+      border-bottom: 1px solid var(--gray-200);
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    header h1 { font-size: 1.25rem; font-weight: 700; color: var(--gray-900); }
+    header h1 span { color: var(--blue); }
+
+    .progress-bar-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .progress-bar-wrap small { font-size: 0.8rem; color: var(--gray-600); white-space: nowrap; }
+    .progress-bar {
+      width: 120px;
+      height: 8px;
+      background: var(--gray-200);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--blue);
+      border-radius: 99px;
+      transition: width 0.4s ease;
+    }
+
+    nav {
+      display: flex;
+      gap: 0.5rem;
+      padding: 1rem 1.5rem 0;
+      border-bottom: 1px solid var(--gray-200);
+      background: white;
+    }
+    nav button {
+      padding: 0.5rem 1.1rem;
+      border: none;
+      background: none;
+      cursor: pointer;
+      font-size: 0.9rem;
+      color: var(--gray-600);
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    nav button.active { color: var(--blue); border-bottom-color: var(--blue); font-weight: 600; }
+    nav button:hover:not(.active) { color: var(--gray-800); }
+
+    main { max-width: 900px; margin: 0 auto; padding: 1.5rem; }
+
+    /* ── ALPHABET VIEW ── */
+    .alphabet-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 0.75rem;
+    }
+
+    .letter-card {
+      background: white;
+      border: 1.5px solid var(--gray-200);
+      border-radius: 12px;
+      padding: 1rem 0.75rem;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.15s, box-shadow 0.15s, transform 0.1s;
+      position: relative;
+    }
+    .letter-card:hover { border-color: var(--blue); box-shadow: 0 2px 8px rgba(37,99,235,.12); transform: translateY(-1px); }
+    .letter-card.known { border-color: var(--green); background: var(--green-light); }
+    .letter-card.known .check { display: block; }
+
+    .check {
+      display: none;
+      position: absolute;
+      top: 6px; right: 8px;
+      font-size: 0.75rem;
+      color: var(--green);
+    }
+
+    .letter-glyph { font-size: 2.2rem; line-height: 1.1; color: var(--gray-900); }
+    .letter-roman { font-size: 0.95rem; font-weight: 600; color: var(--blue); margin: 0.2rem 0; }
+    .letter-name  { font-size: 0.78rem; color: var(--gray-600); }
+    .letter-case  { font-size: 0.75rem; color: var(--gray-400); margin-top: 0.25rem; }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+    .section-header h2 { font-size: 1rem; font-weight: 600; color: var(--gray-800); }
+    .reset-btn {
+      font-size: 0.8rem;
+      color: var(--gray-400);
+      background: none;
+      border: 1px solid var(--gray-200);
+      border-radius: 6px;
+      padding: 0.3rem 0.7rem;
+      cursor: pointer;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .reset-btn:hover { color: var(--red); border-color: var(--red); }
+
+    /* ── FLASHCARD VIEW ── */
+    #flashcard-view { display: flex; flex-direction: column; align-items: center; gap: 1.5rem; }
+
+    .flashcard-container {
+      perspective: 1000px;
+      width: 100%;
+      max-width: 380px;
+      height: 260px;
+      cursor: pointer;
+    }
+    .flashcard {
+      width: 100%; height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.45s ease;
+    }
+    .flashcard.flipped { transform: rotateY(180deg); }
+
+    .flashcard-face {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      background: white;
+      border: 1.5px solid var(--gray-200);
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      box-shadow: 0 4px 24px rgba(0,0,0,.06);
+    }
+    .flashcard-back { transform: rotateY(180deg); }
+
+    .card-hint { font-size: 0.78rem; color: var(--gray-400); position: absolute; top: 14px; }
+    .card-glyph { font-size: 5rem; line-height: 1; color: var(--gray-900); }
+    .card-roman { font-size: 1.4rem; font-weight: 700; color: var(--blue); }
+    .card-name  { font-size: 1rem; color: var(--gray-600); }
+    .card-cases { font-size: 0.9rem; color: var(--gray-500); }
+    .card-sound { font-size: 0.85rem; color: var(--gray-400); font-style: italic; }
+
+    .fc-controls {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+    }
+    .fc-btn {
+      padding: 0.6rem 1.4rem;
+      border-radius: 8px;
+      border: 1.5px solid var(--gray-200);
+      background: white;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--gray-700);
+      transition: all 0.15s;
+    }
+    .fc-btn:hover { border-color: var(--blue); color: var(--blue); }
+    .fc-btn.known-btn { border-color: var(--green); color: var(--green); }
+    .fc-btn.known-btn:hover { background: var(--green-light); }
+    .fc-counter { font-size: 0.85rem; color: var(--gray-400); min-width: 60px; text-align: center; }
+
+    .fc-mode-toggle {
+      display: flex;
+      gap: 0.5rem;
+    }
+    .mode-pill {
+      padding: 0.35rem 0.9rem;
+      border-radius: 99px;
+      border: 1.5px solid var(--gray-200);
+      background: white;
+      cursor: pointer;
+      font-size: 0.82rem;
+      color: var(--gray-600);
+      transition: all 0.15s;
+    }
+    .mode-pill.active { background: var(--blue); border-color: var(--blue); color: white; font-weight: 600; }
+
+    /* ── QUIZ VIEW ── */
+    #quiz-view { max-width: 520px; margin: 0 auto; }
+
+    .quiz-question {
+      background: white;
+      border: 1.5px solid var(--gray-200);
+      border-radius: 16px;
+      padding: 2rem;
+      text-align: center;
+      margin-bottom: 1.25rem;
+      box-shadow: 0 2px 12px rgba(0,0,0,.04);
+    }
+    .quiz-prompt { font-size: 0.85rem; color: var(--gray-400); margin-bottom: 0.5rem; }
+    .quiz-stimulus { font-size: 4rem; color: var(--gray-900); }
+    .quiz-stimulus.text-mode { font-size: 2rem; font-weight: 700; color: var(--blue); }
+
+    .quiz-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+    .quiz-opt {
+      padding: 0.9rem;
+      border: 1.5px solid var(--gray-200);
+      border-radius: 10px;
+      background: white;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 500;
+      transition: all 0.15s;
+      text-align: center;
+    }
+    .quiz-opt:hover:not(:disabled) { border-color: var(--blue); color: var(--blue); background: var(--blue-light); }
+    .quiz-opt.correct { border-color: var(--green); background: var(--green-light); color: var(--green); }
+    .quiz-opt.wrong   { border-color: var(--red); background: var(--red-light); color: var(--red); }
+    .quiz-opt:disabled { cursor: default; }
+
+    .quiz-feedback {
+      text-align: center;
+      font-size: 0.9rem;
+      min-height: 1.4em;
+      color: var(--gray-600);
+    }
+    .quiz-feedback.correct { color: var(--green); font-weight: 600; }
+    .quiz-feedback.wrong   { color: var(--red); }
+
+    .quiz-score {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+    }
+    .score-pill {
+      padding: 0.3rem 0.9rem;
+      border-radius: 99px;
+      font-size: 0.82rem;
+      font-weight: 600;
+    }
+    .score-pill.correct { background: var(--green-light); color: var(--green); }
+    .score-pill.wrong   { background: var(--red-light); color: var(--red); }
+
+    .quiz-type-toggle {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+      margin-bottom: 1.25rem;
+    }
+
+    .next-btn {
+      display: block;
+      margin: 0 auto;
+      padding: 0.65rem 2rem;
+      background: var(--blue);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .next-btn:hover { background: var(--blue-dark); }
+    .next-btn:disabled { opacity: 0.4; cursor: default; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Learn <span>Greek</span></h1>
+  <div class="progress-bar-wrap">
+    <small id="progress-text">0 / 24 known</small>
+    <div class="progress-bar"><div class="progress-bar-fill" id="progress-fill" style="width:0%"></div></div>
+  </div>
+</header>
+
+<nav>
+  <button class="active" onclick="showTab('alphabet')">Alphabet</button>
+  <button onclick="showTab('flashcards')">Flashcards</button>
+  <button onclick="showTab('quiz')">Quiz</button>
+</nav>
+
+<main>
+  <!-- ALPHABET -->
+  <div id="alphabet-view">
+    <div class="section-header">
+      <h2>Click a letter to mark it as known</h2>
+      <button class="reset-btn" onclick="resetProgress()">Reset progress</button>
+    </div>
+    <div class="alphabet-grid" id="alphabet-grid"></div>
+  </div>
+
+  <!-- FLASHCARDS -->
+  <div id="flashcard-view" style="display:none">
+    <div class="fc-mode-toggle">
+      <button class="mode-pill active" id="pill-all" onclick="setFcFilter('all')">All letters</button>
+      <button class="mode-pill" id="pill-unknown" onclick="setFcFilter('unknown')">Unknown only</button>
+    </div>
+    <div class="flashcard-container" onclick="flipCard()">
+      <div class="flashcard" id="flashcard">
+        <div class="flashcard-face flashcard-front">
+          <span class="card-hint">tap to reveal</span>
+          <div class="card-glyph" id="fc-front-glyph"></div>
+          <div class="card-cases" id="fc-front-cases"></div>
+        </div>
+        <div class="flashcard-face flashcard-back">
+          <span class="card-hint">tap to flip back</span>
+          <div class="card-roman" id="fc-back-roman"></div>
+          <div class="card-name"  id="fc-back-name"></div>
+          <div class="card-sound" id="fc-back-sound"></div>
+        </div>
+      </div>
+    </div>
+    <div class="fc-controls">
+      <button class="fc-btn" onclick="fcPrev()">← Prev</button>
+      <span class="fc-counter" id="fc-counter"></span>
+      <button class="fc-btn" onclick="fcNext()">Next →</button>
+    </div>
+    <div class="fc-controls">
+      <button class="fc-btn known-btn" id="fc-known-btn" onclick="fcToggleKnown()">Mark as known ✓</button>
+    </div>
+  </div>
+
+  <!-- QUIZ -->
+  <div id="quiz-view" style="display:none">
+    <div class="quiz-type-toggle">
+      <button class="mode-pill active" id="qpill-glyph-name" onclick="setQuizType('glyph-name')">Glyph → Name</button>
+      <button class="mode-pill" id="qpill-name-glyph" onclick="setQuizType('name-glyph')">Name → Glyph</button>
+      <button class="mode-pill" id="qpill-glyph-roman" onclick="setQuizType('glyph-roman')">Glyph → Roman</button>
+    </div>
+    <div class="quiz-score">
+      <span class="score-pill correct" id="q-correct">✓ 0</span>
+      <span class="score-pill wrong"   id="q-wrong">✗ 0</span>
+    </div>
+    <div class="quiz-question">
+      <div class="quiz-prompt" id="q-prompt"></div>
+      <div class="quiz-stimulus" id="q-stimulus"></div>
+    </div>
+    <div class="quiz-options" id="q-options"></div>
+    <div class="quiz-feedback" id="q-feedback"></div>
+    <button class="next-btn" id="q-next" onclick="nextQuestion()" style="margin-top:1rem" disabled>Next →</button>
+  </div>
+</main>
+
+<script>
+const LETTERS = [
+  { upper:'Α', lower:'α', name:'Alpha',   roman:'a',  sound:'as in "father"' },
+  { upper:'Β', lower:'β', name:'Beta',    roman:'b',  sound:'as in "bed"' },
+  { upper:'Γ', lower:'γ', name:'Gamma',   roman:'g',  sound:'as in "go" (soft before ε/ι)' },
+  { upper:'Δ', lower:'δ', name:'Delta',   roman:'d',  sound:'as in "the" (soft th)' },
+  { upper:'Ε', lower:'ε', name:'Epsilon', roman:'e',  sound:'as in "bed"' },
+  { upper:'Ζ', lower:'ζ', name:'Zeta',    roman:'z',  sound:'as in "zoo"' },
+  { upper:'Η', lower:'η', name:'Eta',     roman:'ē',  sound:'as in "see" (long ee)' },
+  { upper:'Θ', lower:'θ', name:'Theta',   roman:'th', sound:'as in "think"' },
+  { upper:'Ι', lower:'ι', name:'Iota',    roman:'i',  sound:'as in "see"' },
+  { upper:'Κ', lower:'κ', name:'Kappa',   roman:'k',  sound:'as in "keep"' },
+  { upper:'Λ', lower:'λ', name:'Lambda',  roman:'l',  sound:'as in "love"' },
+  { upper:'Μ', lower:'μ', name:'Mu',      roman:'m',  sound:'as in "moon"' },
+  { upper:'Ν', lower:'ν', name:'Nu',      roman:'n',  sound:'as in "no"' },
+  { upper:'Ξ', lower:'ξ', name:'Xi',      roman:'x',  sound:'as in "box"' },
+  { upper:'Ο', lower:'ο', name:'Omicron', roman:'o',  sound:'as in "off"' },
+  { upper:'Π', lower:'π', name:'Pi',      roman:'p',  sound:'as in "put"' },
+  { upper:'Ρ', lower:'ρ', name:'Rho',     roman:'r',  sound:'rolled r' },
+  { upper:'Σ', lower:'σ', name:'Sigma',   roman:'s',  sound:'as in "sun" (ς at end)' },
+  { upper:'Τ', lower:'τ', name:'Tau',     roman:'t',  sound:'as in "top"' },
+  { upper:'Υ', lower:'υ', name:'Upsilon', roman:'y',  sound:'French u or German ü' },
+  { upper:'Φ', lower:'φ', name:'Phi',     roman:'ph', sound:'as in "phone"' },
+  { upper:'Χ', lower:'χ', name:'Chi',     roman:'ch', sound:'as in "Bach" (guttural)' },
+  { upper:'Ψ', lower:'ψ', name:'Psi',     roman:'ps', sound:'as in "lapse"' },
+  { upper:'Ω', lower:'ω', name:'Omega',   roman:'ō',  sound:'as in "go" (long oh)' },
+];
+
+// ── STATE ──────────────────────────────────────────────────────────────────
+
+function loadKnown() {
+  try { return new Set(JSON.parse(localStorage.getItem('greek-known') || '[]')); }
+  catch { return new Set(); }
+}
+function saveKnown() {
+  localStorage.setItem('greek-known', JSON.stringify([...known]));
+}
+let known = loadKnown();
+
+// ── PROGRESS ───────────────────────────────────────────────────────────────
+
+function updateProgress() {
+  const n = known.size, total = LETTERS.length;
+  document.getElementById('progress-text').textContent = `${n} / ${total} known`;
+  document.getElementById('progress-fill').style.width = `${(n/total)*100}%`;
+}
+
+// ── TABS ───────────────────────────────────────────────────────────────────
+
+let currentTab = 'alphabet';
+function showTab(tab) {
+  ['alphabet','flashcards','quiz'].forEach(t => {
+    document.getElementById(t + '-view').style.display = t === tab ? '' : 'none';
+  });
+  document.querySelectorAll('nav button').forEach((b,i) => {
+    b.classList.toggle('active', ['alphabet','flashcards','quiz'][i] === tab);
+  });
+  currentTab = tab;
+  if (tab === 'flashcards') renderFlashcard();
+  if (tab === 'quiz') { resetQuizScore(); nextQuestion(); }
+}
+
+// ── ALPHABET GRID ──────────────────────────────────────────────────────────
+
+function renderGrid() {
+  const grid = document.getElementById('alphabet-grid');
+  grid.innerHTML = '';
+  LETTERS.forEach((l, i) => {
+    const card = document.createElement('div');
+    card.className = 'letter-card' + (known.has(i) ? ' known' : '');
+    card.innerHTML = `
+      <span class="check">✓</span>
+      <div class="letter-glyph">${l.upper}</div>
+      <div class="letter-roman">${l.roman}</div>
+      <div class="letter-name">${l.name}</div>
+      <div class="letter-case">${l.upper} / ${l.lower}</div>
+    `;
+    card.addEventListener('click', () => toggleKnown(i, card));
+    grid.appendChild(card);
+  });
+}
+
+function toggleKnown(i, card) {
+  if (known.has(i)) { known.delete(i); card.classList.remove('known'); }
+  else              { known.add(i);    card.classList.add('known'); }
+  saveKnown();
+  updateProgress();
+  if (currentTab === 'flashcards') updateFcKnownBtn();
+}
+
+function resetProgress() {
+  if (!confirm('Reset all progress?')) return;
+  known.clear(); saveKnown();
+  renderGrid(); updateProgress();
+  if (currentTab === 'flashcards') { renderFlashcard(); updateFcKnownBtn(); }
+}
+
+// ── FLASHCARDS ─────────────────────────────────────────────────────────────
+
+let fcFilter = 'all';
+let fcIndex  = 0;
+let fcDeck   = [];
+
+function setFcFilter(f) {
+  fcFilter = f;
+  document.getElementById('pill-all').classList.toggle('active', f === 'all');
+  document.getElementById('pill-unknown').classList.toggle('active', f === 'unknown');
+  fcIndex = 0;
+  buildFcDeck();
+  renderFlashcard();
+}
+
+function buildFcDeck() {
+  if (fcFilter === 'unknown') {
+    fcDeck = LETTERS.map((l,i) => i).filter(i => !known.has(i));
+  } else {
+    fcDeck = LETTERS.map((_,i) => i);
+  }
+  if (fcDeck.length === 0) fcDeck = LETTERS.map((_,i) => i);
+}
+
+function renderFlashcard() {
+  buildFcDeck();
+  if (fcIndex >= fcDeck.length) fcIndex = 0;
+  const card = document.getElementById('flashcard');
+  card.classList.remove('flipped');
+  const l = LETTERS[fcDeck[fcIndex]];
+  document.getElementById('fc-front-glyph').textContent = l.upper;
+  document.getElementById('fc-front-cases').textContent = `${l.upper} / ${l.lower}`;
+  document.getElementById('fc-back-roman').textContent = l.roman;
+  document.getElementById('fc-back-name').textContent  = l.name;
+  document.getElementById('fc-back-sound').textContent = l.sound;
+  document.getElementById('fc-counter').textContent = `${fcIndex+1} / ${fcDeck.length}`;
+  updateFcKnownBtn();
+}
+
+function flipCard() {
+  document.getElementById('flashcard').classList.toggle('flipped');
+}
+
+function fcNext() { fcIndex = (fcIndex + 1) % fcDeck.length; renderFlashcard(); }
+function fcPrev() { fcIndex = (fcIndex - 1 + fcDeck.length) % fcDeck.length; renderFlashcard(); }
+
+function updateFcKnownBtn() {
+  if (!fcDeck.length) return;
+  const i = fcDeck[fcIndex];
+  const btn = document.getElementById('fc-known-btn');
+  if (known.has(i)) {
+    btn.textContent = 'Unmark known ✕';
+    btn.style.borderColor = '';
+    btn.style.color = '';
+  } else {
+    btn.textContent = 'Mark as known ✓';
+    btn.style.borderColor = 'var(--green)';
+    btn.style.color = 'var(--green)';
+  }
+}
+
+function fcToggleKnown() {
+  if (!fcDeck.length) return;
+  const i = fcDeck[fcIndex];
+  if (known.has(i)) known.delete(i); else known.add(i);
+  saveKnown(); updateProgress(); updateFcKnownBtn();
+  const gridCards = document.querySelectorAll('.letter-card');
+  gridCards[i]?.classList.toggle('known', known.has(i));
+  if (fcFilter === 'unknown') { buildFcDeck(); renderFlashcard(); }
+}
+
+// ── QUIZ ───────────────────────────────────────────────────────────────────
+
+let quizType = 'glyph-name';
+let qCorrect = 0, qWrong = 0;
+let qAnswered = false;
+
+function setQuizType(t) {
+  quizType = t;
+  ['glyph-name','name-glyph','glyph-roman'].forEach(k => {
+    document.getElementById('qpill-' + k).classList.toggle('active', k === t);
+  });
+  nextQuestion();
+}
+
+function resetQuizScore() { qCorrect = 0; qWrong = 0; updateQuizScore(); }
+function updateQuizScore() {
+  document.getElementById('q-correct').textContent = `✓ ${qCorrect}`;
+  document.getElementById('q-wrong').textContent   = `✗ ${qWrong}`;
+}
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.random() * (i+1) | 0;
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function nextQuestion() {
+  qAnswered = false;
+  document.getElementById('q-next').disabled = true;
+  document.getElementById('q-feedback').textContent = '';
+  document.getElementById('q-feedback').className = 'quiz-feedback';
+
+  const correctIdx = Math.random() * LETTERS.length | 0;
+  const correct = LETTERS[correctIdx];
+
+  let wrongPool = LETTERS.filter((_,i) => i !== correctIdx);
+  const distractors = shuffle(wrongPool).slice(0, 3);
+  const options = shuffle([correct, ...distractors]);
+
+  const stimulus = document.getElementById('q-stimulus');
+  const prompt   = document.getElementById('q-prompt');
+
+  if (quizType === 'glyph-name') {
+    stimulus.textContent = correct.upper;
+    stimulus.className = 'quiz-stimulus';
+    prompt.textContent = 'What is the name of this letter?';
+    renderOptions(options, o => o.name, correct.name);
+  } else if (quizType === 'name-glyph') {
+    stimulus.textContent = correct.name;
+    stimulus.className = 'quiz-stimulus text-mode';
+    prompt.textContent = 'Which is the correct glyph?';
+    renderOptions(options, o => o.upper, correct.upper);
+  } else {
+    stimulus.textContent = correct.upper;
+    stimulus.className = 'quiz-stimulus';
+    prompt.textContent = 'What is the romanisation of this letter?';
+    renderOptions(options, o => o.roman, correct.roman);
+  }
+}
+
+function renderOptions(options, labelFn, correctLabel) {
+  const container = document.getElementById('q-options');
+  container.innerHTML = '';
+  options.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'quiz-opt';
+    btn.textContent = labelFn(opt);
+    btn.addEventListener('click', () => answerQuestion(btn, labelFn(opt) === correctLabel, correctLabel, container));
+    container.appendChild(btn);
+  });
+}
+
+function answerQuestion(btn, isCorrect, correctLabel, container) {
+  if (qAnswered) return;
+  qAnswered = true;
+
+  if (isCorrect) {
+    btn.classList.add('correct');
+    qCorrect++;
+    document.getElementById('q-feedback').textContent = 'Correct!';
+    document.getElementById('q-feedback').className = 'quiz-feedback correct';
+  } else {
+    btn.classList.add('wrong');
+    qWrong++;
+    document.getElementById('q-feedback').textContent = `Not quite — the answer is "${correctLabel}"`;
+    document.getElementById('q-feedback').className = 'quiz-feedback wrong';
+    // highlight correct
+    container.querySelectorAll('.quiz-opt').forEach(b => {
+      if (b.textContent === correctLabel) b.classList.add('correct');
+    });
+  }
+
+  container.querySelectorAll('.quiz-opt').forEach(b => b.disabled = true);
+  updateQuizScore();
+  document.getElementById('q-next').disabled = false;
+}
+
+// ── INIT ───────────────────────────────────────────────────────────────────
+
+renderGrid();
+updateProgress();
+buildFcDeck();
+</script>
+</body>
+</html>
