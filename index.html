@@ -34,13 +34,15 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 
 /* NAV */
 .top-nav{position:sticky;top:0;z-index:100;background:rgba(18,20,26,.96);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
-.top-nav-inner{max-width:1100px;margin:0 auto;padding:0 16px;display:flex;align-items:stretch}
+.top-nav-inner{max-width:1100px;margin:0 auto;padding:0 16px;display:flex;flex-wrap:wrap;align-items:stretch}
 .nav-logo{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.05rem;padding:12px 16px 12px 0;border-right:1px solid var(--border);margin-right:6px;display:flex;align-items:center;white-space:nowrap}
-.nav-tabs{display:flex;gap:2px;flex:1;align-items:center;padding:6px 0}
-.nav-tab{background:none;border:none;color:var(--muted);font-family:'Cardo',serif;font-size:.88rem;padding:7px 14px;border-radius:7px;cursor:pointer;transition:all .18s;letter-spacing:.04em;white-space:nowrap}
+.nav-tabs{display:flex;gap:2px;flex:1 1 auto;min-width:0;overflow-x:auto;align-items:center;padding:6px 0;scrollbar-width:none}
+.nav-tabs::-webkit-scrollbar{display:none}
+.nav-tab{background:none;border:none;color:var(--muted);font-family:'Cardo',serif;font-size:.88rem;padding:7px 14px;border-radius:7px;cursor:pointer;transition:all .18s;letter-spacing:.04em;white-space:nowrap;flex-shrink:0}
 .nav-tab:hover{color:var(--white);background:rgba(255,255,255,.05)}
 .nav-tab.active{background:var(--gold);color:#111;font-weight:bold}
-.nav-stats{margin-left:auto;display:flex;align-items:center;gap:8px;padding:0 0 0 12px;border-left:1px solid var(--border)}
+.nav-stats{flex-shrink:0;display:flex;align-items:center;gap:8px;padding:6px 0 6px 12px;border-left:1px solid var(--border)}
+.nav-version{font-family:'Fira Mono',monospace;font-size:.62rem;color:var(--gold-dim);white-space:nowrap;letter-spacing:.02em}
 .stat-badge{font-family:'Fira Mono',monospace;font-size:.67rem;color:var(--muted);white-space:nowrap}
 .stat-pct{font-family:'Fira Mono',monospace;font-size:.75rem;color:var(--L-text);font-weight:600}
 .mini-bar{width:52px;height:5px;background:var(--surface);border-radius:3px;overflow:hidden}
@@ -193,10 +195,11 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   .info-grid{grid-template-columns:repeat(3,1fr)}
   .wc{flex:0 0 84%}
   .chart-grid{grid-template-columns:repeat(3,1fr)}
-  .phonetic-badge,.nav-logo{display:none}
+  .phonetic-badge,.nav-logo,.nav-version,.mini-bar{display:none}
   .nav-tab{padding:7px 8px;font-size:.76rem}
   .modal-cells{grid-template-columns:repeat(2,1fr)}
   .words-grid{grid-template-columns:repeat(auto-fill,minmax(136px,1fr))}
+  .nav-stats{gap:6px}
 }
 
 /* PWA: install + update controls */
@@ -230,6 +233,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
       <button class="nav-tab" onclick="goTo('phrases')">Essential Phrases</button>
     </div>
     <div class="nav-stats">
+      <span class="nav-version" id="nav-version"></span>
       <span class="stat-badge" id="s-lbl">0 / 0</span>
       <div class="mini-bar"><div class="mini-bar-fill" id="s-bar" style="width:0%"></div></div>
       <span class="stat-pct" id="s-pct">0%</span>
@@ -1098,6 +1102,7 @@ buildDots();buildChart();renderLetter(0);buildWCats();buildPCats();stats();
 
 /* ───────────────────────── PWA: install, update, offline ───────────────────────── */
 const APP_VERSION='2026-06-22.1';
+document.getElementById('nav-version').textContent='v'+APP_VERSION;
 
 function pwaToast({icon='ℹ️',msg,actionLabel,onAction,sticky=false,offline=false,timeout=4200}){
   const wrap=document.getElementById('pwa-toast-wrap');
