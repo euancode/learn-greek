@@ -1,664 +1,1218 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Learn Greek Alphabet</title>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ελληνικά — Learn Greek</title>
+<meta name="description" content="Learn the Greek alphabet, 1000 common words, and essential phrases — works offline.">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#12141a">
+<meta name="color-scheme" content="dark">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Learn Greek">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cardo:ital@0;1&family=Fira+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#12141a; --surface:#1c1f28; --card:#222630;
+  --gold:#d6a93a; --gold-light:#eacc7a; --gold-dim:#7a5e20;
+  --white:#ede7d4; --muted:#8a92a4;
+  --accent:#5b90c5; --accent-light:#84b2dc;
+  --border:rgba(214,169,58,0.14); --radius:10px;
+  /* Learned = teal */
+  --L-bg:#0b2828; --L-border:#1c5c5c; --L-text:#52cdcd;
+  /* New (in phrase list, not yet learned) = warm amber */
+  --N-bg:#221c08; --N-border:#6a5414; --N-text:#dcc84a;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--white);font-family:'Cardo',Georgia,serif;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 70% 50% at 15% 8%,rgba(91,144,197,.07) 0%,transparent 55%),radial-gradient(ellipse 55% 65% at 85% 92%,rgba(214,169,58,.05) 0%,transparent 55%);pointer-events:none;z-index:0}
 
-    :root {
-      --blue: #2563eb;
-      --blue-light: #dbeafe;
-      --blue-dark: #1d4ed8;
-      --green: #16a34a;
-      --green-light: #dcfce7;
-      --red: #dc2626;
-      --red-light: #fee2e2;
-      --yellow: #ca8a04;
-      --yellow-light: #fef9c3;
-      --gray-50: #f9fafb;
-      --gray-100: #f3f4f6;
-      --gray-200: #e5e7eb;
-      --gray-400: #9ca3af;
-      --gray-600: #4b5563;
-      --gray-800: #1f2937;
-      --gray-900: #111827;
-    }
+/* NAV */
+.top-nav{position:sticky;top:0;z-index:100;background:rgba(18,20,26,.96);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.top-nav-inner{max-width:1100px;margin:0 auto;padding:0 16px;display:flex;align-items:stretch}
+.nav-logo{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.05rem;padding:12px 16px 12px 0;border-right:1px solid var(--border);margin-right:6px;display:flex;align-items:center;white-space:nowrap}
+.nav-tabs{display:flex;gap:2px;flex:1;align-items:center;padding:6px 0}
+.nav-tab{background:none;border:none;color:var(--muted);font-family:'Cardo',serif;font-size:.88rem;padding:7px 14px;border-radius:7px;cursor:pointer;transition:all .18s;letter-spacing:.04em;white-space:nowrap}
+.nav-tab:hover{color:var(--white);background:rgba(255,255,255,.05)}
+.nav-tab.active{background:var(--gold);color:#111;font-weight:bold}
+.nav-stats{margin-left:auto;display:flex;align-items:center;gap:8px;padding:0 0 0 12px;border-left:1px solid var(--border)}
+.stat-badge{font-family:'Fira Mono',monospace;font-size:.67rem;color:var(--muted);white-space:nowrap}
+.stat-pct{font-family:'Fira Mono',monospace;font-size:.75rem;color:var(--L-text);font-weight:600}
+.mini-bar{width:52px;height:5px;background:var(--surface);border-radius:3px;overflow:hidden}
+.mini-bar-fill{height:100%;background:var(--L-text);border-radius:3px;transition:width .5s}
 
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: var(--gray-50);
-      color: var(--gray-900);
-      min-height: 100vh;
-    }
+/* SECTIONS */
+.section{display:none;position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:18px 16px 60px}
+.section.active{display:block}
 
-    header {
-      background: white;
-      border-bottom: 1px solid var(--gray-200);
-      padding: 1rem 1.5rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      position: sticky;
-      top: 0;
-      z-index: 10;
-    }
+/* ALPHABET */
+.alpha-header{text-align:center;padding:20px 0 24px}
+.alpha-title{font-family:'Playfair Display',serif;font-size:clamp(1.7rem,4vw,2.7rem);color:var(--gold);margin-bottom:4px}
+.alpha-sub{font-style:italic;color:var(--muted);font-size:.92rem}
+.tab-nav{display:flex;gap:3px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:4px;width:fit-content;margin:0 auto 24px}
+.tab-btn{background:none;border:none;color:var(--muted);font-family:'Cardo',serif;font-size:.88rem;padding:6px 18px;border-radius:7px;cursor:pointer;transition:all .2s;letter-spacing:.04em}
+.tab-btn:hover{color:var(--white)}
+.tab-btn.active{background:var(--gold);color:#111;font-weight:bold}
+.progress-bar{height:3px;background:var(--surface);border-radius:2px;margin-bottom:20px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--gold-dim),var(--gold));border-radius:2px;transition:width .4s}
+.letter-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px 22px 20px;margin-bottom:12px;position:relative;animation:cIn .3s cubic-bezier(.4,0,.2,1)}
+@keyframes cIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.letter-card::before{content:attr(data-n);position:absolute;top:14px;right:16px;font-family:'Fira Mono',monospace;font-size:.65rem;color:var(--gold-dim);letter-spacing:.1em}
+.greek-display{display:flex;align-items:baseline;gap:14px;margin-bottom:16px}
+.greek-main{font-family:'Playfair Display',serif;font-size:clamp(4rem,11vw,7rem);line-height:1;color:var(--gold);text-shadow:0 0 48px rgba(214,169,58,.2)}
+.greek-upper{font-family:'Playfair Display',serif;font-size:clamp(2rem,5.5vw,3.5rem);color:var(--gold-light);opacity:.45;line-height:1}
+.info-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:14px}
+.info-cell{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:9px 10px;text-align:center}
+.info-lbl{font-family:'Fira Mono',monospace;font-size:.55rem;text-transform:uppercase;letter-spacing:.12em;color:var(--gold-dim);margin-bottom:4px}
+.info-val{font-family:'Playfair Display',serif;font-size:1.15rem;color:var(--white);line-height:1.2}
+.info-val.gl{font-family:'Fira Mono',monospace;font-size:.86rem;color:var(--accent-light)}
+.info-val.en{font-size:.86rem;color:var(--muted)}
+.info-val.pr{font-family:'Fira Mono',monospace;font-size:.76rem;color:#72c9b4;letter-spacing:.03em;line-height:1.3}
+.sound-strip{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:10px 13px;margin-bottom:12px;display:flex;align-items:center;gap:10px}
+.sound-text{font-size:.81rem;color:var(--muted);line-height:1.5}
+.sound-text strong{color:var(--white);font-style:italic;font-weight:normal}
+.phonetic-badge{margin-left:auto;flex-shrink:0;background:rgba(91,144,197,.12);border:1px solid rgba(91,144,197,.24);border-radius:6px;padding:2px 7px;font-family:'Fira Mono',monospace;font-size:.72rem;color:var(--accent-light)}
+.wds-header{display:flex;align-items:center;gap:6px;margin-bottom:7px}
+.wds-lbl{font-family:'Fira Mono',monospace;font-size:.54rem;text-transform:uppercase;letter-spacing:.12em;color:var(--gold-dim);flex:1}
+.wds-dots{display:flex;gap:4px}
+.wds-dot{width:5px;height:5px;border-radius:50%;background:var(--surface);border:1px solid var(--border);cursor:pointer;transition:all .15s}
+.wds-dot.active{background:var(--gold);border-color:var(--gold)}
+.sc-btn{background:var(--surface);border:1px solid var(--border);color:var(--gold);width:23px;height:23px;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.72rem;transition:all .15s;flex-shrink:0}
+.sc-btn:hover:not(:disabled){background:var(--gold);color:#111;border-color:var(--gold)}
+.sc-btn:disabled{opacity:.22;cursor:default}
+.wds-track{display:flex;gap:9px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding:2px 1px 6px}
+.wds-track::-webkit-scrollbar{display:none}
+.wc{flex:0 0 calc(50% - 5px);min-width:180px;max-width:260px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 12px 10px;scroll-snap-align:start;display:flex;flex-direction:column;gap:4px;transition:border-color .2s}
+.wc:hover{border-color:var(--gold-dim)}
+.wc.aw{border-color:var(--gold)}
+.wc-top{display:flex;align-items:flex-start;justify-content:space-between;gap:6px}
+.wc-gk{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--white);line-height:1.1}
+.wc-em{font-size:1.7rem;line-height:1;flex-shrink:0}
+.wc-mn{font-style:italic;color:var(--muted);font-size:.81rem}
+.wc-tr{font-family:'Fira Mono',monospace;font-size:.68rem;color:var(--accent-light)}
+.wc-sy{display:flex;align-items:center;gap:3px;margin-top:1px}
+.wc-sy-lbl{font-family:'Fira Mono',monospace;font-size:.5rem;text-transform:uppercase;letter-spacing:.1em;color:var(--gold-dim)}
+.wc-sy-val{font-family:'Fira Mono',monospace;font-size:.74rem;color:#72c9b4}
+.nav-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:14px}
+.nav-btn{background:var(--surface);border:1px solid var(--border);color:var(--gold);font-family:'Playfair Display',serif;font-size:.9rem;padding:9px 20px;border-radius:var(--radius);cursor:pointer;transition:all .18s;letter-spacing:.04em}
+.nav-btn:hover{background:var(--gold);color:#111;border-color:var(--gold);transform:translateY(-1px)}
+.nav-btn:disabled{opacity:.28;cursor:not-allowed;transform:none}
+.nav-ctr{font-family:'Fira Mono',monospace;font-size:.82rem;color:var(--muted);letter-spacing:.1em}
+.dot-nav{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;margin-top:14px;padding-bottom:4px}
+.dot{width:25px;height:25px;border-radius:50%;background:var(--surface);border:1px solid var(--border);cursor:pointer;font-family:'Playfair Display',serif;font-size:.58rem;color:var(--muted);display:flex;align-items:center;justify-content:center;transition:all .15s}
+.dot:hover{border-color:var(--gold);color:var(--gold)}
+.dot.active{background:var(--gold);color:#111;border-color:var(--gold);font-weight:bold}
+.chart-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:7px;padding-bottom:30px}
+.chart-cell{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:11px 7px 9px;cursor:pointer;transition:all .18s;text-align:center;position:relative}
+.chart-cell:hover{border-color:var(--gold);transform:translateY(-2px);background:var(--surface)}
+.cc-n{font-family:'Fira Mono',monospace;font-size:.52rem;color:var(--gold-dim);position:absolute;top:5px;right:6px}
+.cc-ltrs{display:flex;align-items:baseline;justify-content:center;gap:4px;margin-bottom:2px}
+.cc-lo{font-family:'Playfair Display',serif;font-size:1.7rem;color:var(--gold);line-height:1}
+.cc-up{font-family:'Playfair Display',serif;font-size:1rem;color:var(--gold-light);opacity:.55;line-height:1}
+.cc-em{font-size:1rem;margin-bottom:2px}
+.cc-gl{font-family:'Fira Mono',monospace;font-size:.6rem;color:var(--accent-light);letter-spacing:.05em}
+.cc-en{font-size:.67rem;color:var(--muted);font-style:italic;margin-bottom:1px}
+.cc-pr{font-family:'Fira Mono',monospace;font-size:.54rem;color:#72c9b4}
 
-    header h1 { font-size: 1.25rem; font-weight: 700; color: var(--gray-900); }
-    header h1 span { color: var(--blue); }
+/* 1000 WORDS */
+.ws-hdr{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.ws-title{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--gold)}
+.cat-bar{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px}
+.cat-btn{background:var(--surface);border:1px solid var(--border);color:var(--muted);font-family:'Fira Mono',monospace;font-size:.65rem;padding:4px 10px;border-radius:16px;cursor:pointer;transition:all .15s;white-space:nowrap}
+.cat-btn:hover{color:var(--white);border-color:var(--muted)}
+.cat-btn.active{background:var(--gold);color:#111;border-color:var(--gold)}
+.legend{display:flex;gap:16px;margin-bottom:11px;flex-wrap:wrap;align-items:center}
+.leg-item{display:flex;align-items:center;gap:5px;font-family:'Fira Mono',monospace;font-size:.65rem;color:var(--muted)}
+.leg-sw{width:11px;height:11px;border-radius:3px;border:1px solid}
+.words-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:6px}
+.word-tile{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 12px;cursor:pointer;transition:all .18s;position:relative}
+.word-tile:hover{transform:translateY(-1px);border-color:rgba(214,169,58,.38)}
+.word-tile.learned{background:#091f1f;border-color:#195555}
+.word-tile.learned:hover{border-color:var(--L-text)}
+.wt-gk{font-family:'Playfair Display',serif;font-size:1.08rem;color:var(--white);margin-bottom:2px;line-height:1.2}
+.word-tile.learned .wt-gk{color:var(--L-text)}
+.wt-en{font-size:.77rem;color:var(--muted);font-style:italic;margin-bottom:1px}
+.wt-say{font-family:'Fira Mono',monospace;font-size:.61rem;color:var(--accent-light)}
+.wt-chk{position:absolute;top:6px;right:7px;font-size:.66rem;color:var(--L-text);font-family:'Fira Mono',monospace}
+.words-empty{text-align:center;color:var(--muted);padding:52px 20px;font-style:italic}
 
-    .progress-bar-wrap {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-    .progress-bar-wrap small { font-size: 0.8rem; color: var(--gray-600); white-space: nowrap; }
-    .progress-bar {
-      width: 120px;
-      height: 8px;
-      background: var(--gray-200);
-      border-radius: 99px;
-      overflow: hidden;
-    }
-    .progress-bar-fill {
-      height: 100%;
-      background: var(--blue);
-      border-radius: 99px;
-      transition: width 0.4s ease;
-    }
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.74);z-index:200;backdrop-filter:blur(5px);align-items:center;justify-content:center;padding:16px}
+.modal-overlay.open{display:flex}
+.modal{background:var(--card);border:1px solid rgba(214,169,58,.2);border-radius:16px;width:100%;max-width:490px;max-height:90vh;overflow-y:auto;padding:24px 22px 20px;position:relative;animation:mIn .22s cubic-bezier(.4,0,.2,1)}
+@keyframes mIn{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:scale(1)}}
+.modal-close{position:absolute;top:12px;right:13px;background:none;border:none;color:var(--muted);font-size:1.05rem;cursor:pointer;padding:4px 8px;border-radius:6px;transition:color .15s}
+.modal-close:hover{color:var(--white)}
+.modal-gk{font-family:'Playfair Display',serif;font-size:2.5rem;color:var(--gold);line-height:1;margin-bottom:3px}
+.modal-up{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--gold-light);opacity:.5;margin-left:7px;vertical-align:baseline}
+.modal-en{font-style:italic;color:var(--muted);font-size:.96rem;margin-bottom:14px}
+.modal-cells{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:13px}
+.mc{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 10px;text-align:center}
+.mc-lbl{font-family:'Fira Mono',monospace;font-size:.54rem;text-transform:uppercase;letter-spacing:.12em;color:var(--gold-dim);margin-bottom:4px}
+.mc-val{font-family:'Fira Mono',monospace;font-size:.84rem;color:var(--white)}
+.mc-val.gl{color:var(--accent-light)}
+.mc-val.say{color:#72c9b4}
+.m-btn{width:100%;padding:11px;border-radius:var(--radius);border:2px solid;font-family:'Cardo',serif;font-size:.98rem;cursor:pointer;transition:all .2s;letter-spacing:.04em;margin-top:5px;font-weight:bold}
+.m-btn.mark{background:transparent;border-color:var(--L-border);color:var(--L-text)}
+.m-btn.mark:hover{background:var(--L-text);color:#091f1f;border-color:var(--L-text)}
+.m-btn.unmark{background:var(--L-bg);border-color:var(--L-text);color:var(--L-text)}
+.m-btn.unmark:hover{background:transparent;border-color:var(--muted);color:var(--muted)}
 
-    nav {
-      display: flex;
-      gap: 0.5rem;
-      padding: 1rem 1.5rem 0;
-      border-bottom: 1px solid var(--gray-200);
-      background: white;
-    }
-    nav button {
-      padding: 0.5rem 1.1rem;
-      border: none;
-      background: none;
-      cursor: pointer;
-      font-size: 0.9rem;
-      color: var(--gray-600);
-      border-bottom: 2px solid transparent;
-      margin-bottom: -1px;
-      transition: color 0.15s, border-color 0.15s;
-    }
-    nav button.active { color: var(--blue); border-bottom-color: var(--blue); font-weight: 600; }
-    nav button:hover:not(.active) { color: var(--gray-800); }
+/* PHRASES */
+.ph-hdr{margin-bottom:16px}
+.ph-title{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--gold);margin-bottom:3px}
+.ph-sub{color:var(--muted);font-style:italic;font-size:.87rem}
+.ph-legend{display:flex;gap:12px;margin-bottom:12px;flex-wrap:wrap;align-items:center}
+.phl-item{display:flex;align-items:center;gap:5px;font-family:'Fira Mono',monospace;font-size:.63rem;color:var(--muted)}
+.phl-sw{width:9px;height:9px;border-radius:2px;border:1px solid}
+.pc{background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:14px 16px;margin-bottom:8px;transition:border-color .18s}
+.pc.pl{background:var(--L-bg);border-color:var(--L-border)}
+.pc:hover{border-color:rgba(214,169,58,.32)}
+.pc-top{display:flex;align-items:flex-start;justify-content:space-between;gap:9px;margin-bottom:3px}
+.pc-gk{font-family:'Playfair Display',serif;font-size:1.18rem;color:var(--white);line-height:1.3;flex:1}
+.pc.pl .pc-gk{color:var(--L-text)}
+.pc-mbtn{flex-shrink:0;background:none;border:1px solid var(--border);color:var(--muted);font-family:'Fira Mono',monospace;font-size:.6rem;padding:4px 9px;border-radius:14px;cursor:pointer;transition:all .18s;white-space:nowrap;margin-top:2px}
+.pc-mbtn:hover{border-color:var(--L-border);color:var(--L-text)}
+.pc.pl .pc-mbtn{background:var(--L-bg);border-color:var(--L-text);color:var(--L-text)}
+.pc-en{font-style:italic;color:var(--muted);font-size:.87rem;margin-bottom:5px}
+.pc-say{font-family:'Fira Mono',monospace;font-size:.71rem;color:#72c9b4;margin-bottom:8px}
+.pc-chips{display:flex;flex-wrap:wrap;gap:4px}
+.chip{font-family:'Fira Mono',monospace;font-size:.65rem;padding:2px 8px;border-radius:14px;border:1px solid;cursor:pointer;transition:all .15s;white-space:nowrap}
+.chip.cl{background:var(--L-bg);border-color:var(--L-border);color:var(--L-text)}
+.chip.cl:hover{border-color:var(--L-text)}
+.chip.cn{background:var(--N-bg);border-color:var(--N-border);color:var(--N-text)}
+.chip.cn:hover{border-color:var(--N-text)}
+.chip.cu{background:rgba(255,255,255,.03);border-color:var(--border);color:var(--muted)}
 
-    main { max-width: 900px; margin: 0 auto; padding: 1.5rem; }
+@media(max-width:560px){
+  .info-grid{grid-template-columns:repeat(3,1fr)}
+  .wc{flex:0 0 84%}
+  .chart-grid{grid-template-columns:repeat(3,1fr)}
+  .phonetic-badge,.nav-logo{display:none}
+  .nav-tab{padding:7px 8px;font-size:.76rem}
+  .modal-cells{grid-template-columns:repeat(2,1fr)}
+  .words-grid{grid-template-columns:repeat(auto-fill,minmax(136px,1fr))}
+}
 
-    /* ── ALPHABET VIEW ── */
-    .alphabet-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-      gap: 0.75rem;
-    }
+/* PWA: install + update controls */
+.pwa-btn{background:var(--surface);border:1px solid var(--border);color:var(--gold);width:26px;height:26px;border-radius:7px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.85rem;transition:all .15s;flex-shrink:0}
+.pwa-btn:hover{background:var(--gold);color:#111;border-color:var(--gold)}
+.pwa-btn.spin svg{animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.install-btn{display:none;background:var(--gold);color:#111;border:none;font-family:'Cardo',serif;font-weight:bold;font-size:.78rem;padding:6px 13px;border-radius:7px;cursor:pointer;letter-spacing:.03em;white-space:nowrap;flex-shrink:0}
+.install-btn:hover{background:var(--gold-light)}
+.install-btn.show{display:inline-flex;align-items:center;gap:5px}
 
-    .letter-card {
-      background: white;
-      border: 1.5px solid var(--gray-200);
-      border-radius: 12px;
-      padding: 1rem 0.75rem;
-      text-align: center;
-      cursor: pointer;
-      transition: border-color 0.15s, box-shadow 0.15s, transform 0.1s;
-      position: relative;
-    }
-    .letter-card:hover { border-color: var(--blue); box-shadow: 0 2px 8px rgba(37,99,235,.12); transform: translateY(-1px); }
-    .letter-card.known { border-color: var(--green); background: var(--green-light); }
-    .letter-card.known .check { display: block; }
-
-    .check {
-      display: none;
-      position: absolute;
-      top: 6px; right: 8px;
-      font-size: 0.75rem;
-      color: var(--green);
-    }
-
-    .letter-glyph { font-size: 2.2rem; line-height: 1.1; color: var(--gray-900); }
-    .letter-roman { font-size: 0.95rem; font-weight: 600; color: var(--blue); margin: 0.2rem 0; }
-    .letter-name  { font-size: 0.78rem; color: var(--gray-600); }
-    .letter-case  { font-size: 0.75rem; color: var(--gray-400); margin-top: 0.25rem; }
-
-    .section-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 1rem;
-    }
-    .section-header h2 { font-size: 1rem; font-weight: 600; color: var(--gray-800); }
-    .reset-btn {
-      font-size: 0.8rem;
-      color: var(--gray-400);
-      background: none;
-      border: 1px solid var(--gray-200);
-      border-radius: 6px;
-      padding: 0.3rem 0.7rem;
-      cursor: pointer;
-      transition: color 0.15s, border-color 0.15s;
-    }
-    .reset-btn:hover { color: var(--red); border-color: var(--red); }
-
-    /* ── FLASHCARD VIEW ── */
-    #flashcard-view { display: flex; flex-direction: column; align-items: center; gap: 1.5rem; }
-
-    .flashcard-container {
-      perspective: 1000px;
-      width: 100%;
-      max-width: 380px;
-      height: 260px;
-      cursor: pointer;
-    }
-    .flashcard {
-      width: 100%; height: 100%;
-      position: relative;
-      transform-style: preserve-3d;
-      transition: transform 0.45s ease;
-    }
-    .flashcard.flipped { transform: rotateY(180deg); }
-
-    .flashcard-face {
-      position: absolute;
-      inset: 0;
-      backface-visibility: hidden;
-      background: white;
-      border: 1.5px solid var(--gray-200);
-      border-radius: 16px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      box-shadow: 0 4px 24px rgba(0,0,0,.06);
-    }
-    .flashcard-back { transform: rotateY(180deg); }
-
-    .card-hint { font-size: 0.78rem; color: var(--gray-400); position: absolute; top: 14px; }
-    .card-glyph { font-size: 5rem; line-height: 1; color: var(--gray-900); }
-    .card-roman { font-size: 1.4rem; font-weight: 700; color: var(--blue); }
-    .card-name  { font-size: 1rem; color: var(--gray-600); }
-    .card-cases { font-size: 0.9rem; color: var(--gray-500); }
-    .card-sound { font-size: 0.85rem; color: var(--gray-400); font-style: italic; }
-
-    .fc-controls {
-      display: flex;
-      gap: 0.75rem;
-      align-items: center;
-    }
-    .fc-btn {
-      padding: 0.6rem 1.4rem;
-      border-radius: 8px;
-      border: 1.5px solid var(--gray-200);
-      background: white;
-      cursor: pointer;
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: var(--gray-700);
-      transition: all 0.15s;
-    }
-    .fc-btn:hover { border-color: var(--blue); color: var(--blue); }
-    .fc-btn.known-btn { border-color: var(--green); color: var(--green); }
-    .fc-btn.known-btn:hover { background: var(--green-light); }
-    .fc-counter { font-size: 0.85rem; color: var(--gray-400); min-width: 60px; text-align: center; }
-
-    .fc-mode-toggle {
-      display: flex;
-      gap: 0.5rem;
-    }
-    .mode-pill {
-      padding: 0.35rem 0.9rem;
-      border-radius: 99px;
-      border: 1.5px solid var(--gray-200);
-      background: white;
-      cursor: pointer;
-      font-size: 0.82rem;
-      color: var(--gray-600);
-      transition: all 0.15s;
-    }
-    .mode-pill.active { background: var(--blue); border-color: var(--blue); color: white; font-weight: 600; }
-
-    /* ── QUIZ VIEW ── */
-    #quiz-view { max-width: 520px; margin: 0 auto; }
-
-    .quiz-question {
-      background: white;
-      border: 1.5px solid var(--gray-200);
-      border-radius: 16px;
-      padding: 2rem;
-      text-align: center;
-      margin-bottom: 1.25rem;
-      box-shadow: 0 2px 12px rgba(0,0,0,.04);
-    }
-    .quiz-prompt { font-size: 0.85rem; color: var(--gray-400); margin-bottom: 0.5rem; }
-    .quiz-stimulus { font-size: 4rem; color: var(--gray-900); }
-    .quiz-stimulus.text-mode { font-size: 2rem; font-weight: 700; color: var(--blue); }
-
-    .quiz-options {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.75rem;
-      margin-bottom: 1rem;
-    }
-    .quiz-opt {
-      padding: 0.9rem;
-      border: 1.5px solid var(--gray-200);
-      border-radius: 10px;
-      background: white;
-      cursor: pointer;
-      font-size: 1rem;
-      font-weight: 500;
-      transition: all 0.15s;
-      text-align: center;
-    }
-    .quiz-opt:hover:not(:disabled) { border-color: var(--blue); color: var(--blue); background: var(--blue-light); }
-    .quiz-opt.correct { border-color: var(--green); background: var(--green-light); color: var(--green); }
-    .quiz-opt.wrong   { border-color: var(--red); background: var(--red-light); color: var(--red); }
-    .quiz-opt:disabled { cursor: default; }
-
-    .quiz-feedback {
-      text-align: center;
-      font-size: 0.9rem;
-      min-height: 1.4em;
-      color: var(--gray-600);
-    }
-    .quiz-feedback.correct { color: var(--green); font-weight: 600; }
-    .quiz-feedback.wrong   { color: var(--red); }
-
-    .quiz-score {
-      display: flex;
-      gap: 1rem;
-      justify-content: center;
-      margin-bottom: 1.5rem;
-    }
-    .score-pill {
-      padding: 0.3rem 0.9rem;
-      border-radius: 99px;
-      font-size: 0.82rem;
-      font-weight: 600;
-    }
-    .score-pill.correct { background: var(--green-light); color: var(--green); }
-    .score-pill.wrong   { background: var(--red-light); color: var(--red); }
-
-    .quiz-type-toggle {
-      display: flex;
-      gap: 0.5rem;
-      justify-content: center;
-      margin-bottom: 1.25rem;
-    }
-
-    .next-btn {
-      display: block;
-      margin: 0 auto;
-      padding: 0.65rem 2rem;
-      background: var(--blue);
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 0.95rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.15s;
-    }
-    .next-btn:hover { background: var(--blue-dark); }
-    .next-btn:disabled { opacity: 0.4; cursor: default; }
-  </style>
+.pwa-toast-wrap{position:fixed;left:0;right:0;bottom:18px;display:flex;flex-direction:column;align-items:center;gap:8px;z-index:300;pointer-events:none}
+.pwa-toast{pointer-events:auto;max-width:min(92vw,420px);background:var(--card);border:1px solid rgba(214,169,58,.3);border-radius:12px;padding:11px 14px;display:flex;align-items:center;gap:10px;box-shadow:0 8px 30px rgba(0,0,0,.4);font-family:'Cardo',serif;font-size:.85rem;color:var(--white);animation:tIn .25s cubic-bezier(.4,0,.2,1)}
+@keyframes tIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.pwa-toast.offline{border-color:rgba(255,255,255,.12);color:var(--muted)}
+.pwa-toast .ico{flex-shrink:0;font-size:1rem}
+.pwa-toast .msg{flex:1;line-height:1.3}
+.pwa-toast .act{background:var(--gold);color:#111;border:none;font-family:'Cardo',serif;font-weight:bold;font-size:.78rem;padding:6px 13px;border-radius:7px;cursor:pointer;white-space:nowrap;flex-shrink:0}
+.pwa-toast .act:hover{background:var(--gold-light)}
+.pwa-toast .dis{background:none;border:none;color:var(--muted);cursor:pointer;font-size:.95rem;padding:2px 4px;flex-shrink:0}
+.pwa-toast .dis:hover{color:var(--white)}
+</style>
 </head>
 <body>
-
-<header>
-  <h1>Learn <span>Greek</span></h1>
-  <div class="progress-bar-wrap">
-    <small id="progress-text">0 / 24 known</small>
-    <div class="progress-bar"><div class="progress-bar-fill" id="progress-fill" style="width:0%"></div></div>
+<nav class="top-nav">
+  <div class="top-nav-inner">
+    <div class="nav-logo">Ελληνικά</div>
+    <div class="nav-tabs">
+      <button class="nav-tab active" onclick="goTo('alphabet')">Alphabet</button>
+      <button class="nav-tab" onclick="goTo('words')">1000 Words</button>
+      <button class="nav-tab" onclick="goTo('phrases')">Essential Phrases</button>
+    </div>
+    <div class="nav-stats">
+      <span class="stat-badge" id="s-lbl">0 / 0</span>
+      <div class="mini-bar"><div class="mini-bar-fill" id="s-bar" style="width:0%"></div></div>
+      <span class="stat-pct" id="s-pct">0%</span>
+      <button class="install-btn" id="install-btn" title="Install Learn Greek as an app" onclick="pwaInstall()">⤓ Install</button>
+      <button class="pwa-btn" id="update-check-btn" title="Check for updates" onclick="pwaCheckForUpdates(true)">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+      </button>
+    </div>
   </div>
-</header>
-
-<nav>
-  <button class="active" onclick="showTab('alphabet')">Alphabet</button>
-  <button onclick="showTab('flashcards')">Flashcards</button>
-  <button onclick="showTab('quiz')">Quiz</button>
 </nav>
-
-<main>
-  <!-- ALPHABET -->
-  <div id="alphabet-view">
-    <div class="section-header">
-      <h2>Click a letter to mark it as known</h2>
-      <button class="reset-btn" onclick="resetProgress()">Reset progress</button>
-    </div>
-    <div class="alphabet-grid" id="alphabet-grid"></div>
+<div class="pwa-toast-wrap" id="pwa-toast-wrap"></div>
+<div class="section active" id="sec-alphabet">
+  <div class="alpha-header">
+    <div class="alpha-title">Ελληνικό Αλφάβητο</div>
+    <div class="alpha-sub">The Greek Alphabet — all 24 letters</div>
   </div>
-
-  <!-- FLASHCARDS -->
-  <div id="flashcard-view" style="display:none">
-    <div class="fc-mode-toggle">
-      <button class="mode-pill active" id="pill-all" onclick="setFcFilter('all')">All letters</button>
-      <button class="mode-pill" id="pill-unknown" onclick="setFcFilter('unknown')">Unknown only</button>
-    </div>
-    <div class="flashcard-container" onclick="flipCard()">
-      <div class="flashcard" id="flashcard">
-        <div class="flashcard-face flashcard-front">
-          <span class="card-hint">tap to reveal</span>
-          <div class="card-glyph" id="fc-front-glyph"></div>
-          <div class="card-cases" id="fc-front-cases"></div>
-        </div>
-        <div class="flashcard-face flashcard-back">
-          <span class="card-hint">tap to flip back</span>
-          <div class="card-roman" id="fc-back-roman"></div>
-          <div class="card-name"  id="fc-back-name"></div>
-          <div class="card-sound" id="fc-back-sound"></div>
-        </div>
-      </div>
-    </div>
-    <div class="fc-controls">
-      <button class="fc-btn" onclick="fcPrev()">← Prev</button>
-      <span class="fc-counter" id="fc-counter"></span>
-      <button class="fc-btn" onclick="fcNext()">Next →</button>
-    </div>
-    <div class="fc-controls">
-      <button class="fc-btn known-btn" id="fc-known-btn" onclick="fcToggleKnown()">Mark as known ✓</button>
-    </div>
+  <div class="tab-nav">
+    <button class="tab-btn active" onclick="aTab('learn')">✦ Learn</button>
+    <button class="tab-btn" onclick="aTab('chart')">⊞ Full Chart</button>
   </div>
-
-  <!-- QUIZ -->
-  <div id="quiz-view" style="display:none">
-    <div class="quiz-type-toggle">
-      <button class="mode-pill active" id="qpill-glyph-name" onclick="setQuizType('glyph-name')">Glyph → Name</button>
-      <button class="mode-pill" id="qpill-name-glyph" onclick="setQuizType('name-glyph')">Name → Glyph</button>
-      <button class="mode-pill" id="qpill-glyph-roman" onclick="setQuizType('glyph-roman')">Glyph → Roman</button>
+  <div id="al-learn">
+    <div class="progress-bar"><div class="progress-fill" id="al-prog"></div></div>
+    <div class="letter-card" id="al-card"></div>
+    <div class="sound-strip" id="al-sound"></div>
+    <div id="al-words"></div>
+    <div class="nav-row">
+      <button class="nav-btn" id="al-prev" onclick="alNav(-1)">← Prev</button>
+      <span class="nav-ctr" id="al-ctr"></span>
+      <button class="nav-btn" id="al-next" onclick="alNav(1)">Next →</button>
     </div>
-    <div class="quiz-score">
-      <span class="score-pill correct" id="q-correct">✓ 0</span>
-      <span class="score-pill wrong"   id="q-wrong">✗ 0</span>
-    </div>
-    <div class="quiz-question">
-      <div class="quiz-prompt" id="q-prompt"></div>
-      <div class="quiz-stimulus" id="q-stimulus"></div>
-    </div>
-    <div class="quiz-options" id="q-options"></div>
-    <div class="quiz-feedback" id="q-feedback"></div>
-    <button class="next-btn" id="q-next" onclick="nextQuestion()" style="margin-top:1rem" disabled>Next →</button>
+    <div class="dot-nav" id="al-dots"></div>
   </div>
-</main>
-
+  <div id="al-chart" style="display:none"><div class="chart-grid" id="al-cg"></div></div>
+</div>
+<div class="section" id="sec-words">
+  <div class="ws-hdr"><div class="ws-title">1000 Common Greek Words</div></div>
+  <div class="cat-bar" id="w-cats"></div>
+  <div class="legend">
+    <div class="leg-item"><div class="leg-sw" style="background:#091f1f;border-color:#195555"></div><span style="color:var(--L-text)">Learned</span></div>
+    <div class="leg-item"><div class="leg-sw" style="background:var(--surface);border-color:var(--border)"></div>Not yet seen</div>
+  </div>
+  <div class="words-grid" id="w-grid"></div>
+  <div class="words-empty" id="w-empty" style="display:none">No words.</div>
+</div>
+<div class="section" id="sec-phrases">
+  <div class="ph-hdr">
+    <div class="ph-title">Essential Phrases</div>
+    <div class="ph-sub">Tap word chips to open &amp; learn them. Mark whole phrases learned.</div>
+  </div>
+  <div class="cat-bar" id="p-cats"></div>
+  <div class="ph-legend">
+    <div class="phl-item"><div class="phl-sw" style="background:var(--L-bg);border-color:var(--L-border)"></div><span style="color:var(--L-text)">Word learned</span></div>
+    <div class="phl-item"><div class="phl-sw" style="background:var(--N-bg);border-color:var(--N-border)"></div><span style="color:var(--N-text)">In list — tap to learn</span></div>
+    <div class="phl-item"><div class="phl-sw" style="background:rgba(255,255,255,.03);border-color:var(--border)"></div>Not in word list</div>
+  </div>
+  <div id="p-list"></div>
+</div>
+<div class="modal-overlay" id="mo" onclick="closeMo(event)"><div class="modal" id="m"></div></div>
 <script>
-const LETTERS = [
-  { upper:'Α', lower:'α', name:'Alpha',   roman:'a',  sound:'as in "father"' },
-  { upper:'Β', lower:'β', name:'Beta',    roman:'b',  sound:'as in "bed"' },
-  { upper:'Γ', lower:'γ', name:'Gamma',   roman:'g',  sound:'as in "go" (soft before ε/ι)' },
-  { upper:'Δ', lower:'δ', name:'Delta',   roman:'d',  sound:'as in "the" (soft th)' },
-  { upper:'Ε', lower:'ε', name:'Epsilon', roman:'e',  sound:'as in "bed"' },
-  { upper:'Ζ', lower:'ζ', name:'Zeta',    roman:'z',  sound:'as in "zoo"' },
-  { upper:'Η', lower:'η', name:'Eta',     roman:'ē',  sound:'as in "see" (long ee)' },
-  { upper:'Θ', lower:'θ', name:'Theta',   roman:'th', sound:'as in "think"' },
-  { upper:'Ι', lower:'ι', name:'Iota',    roman:'i',  sound:'as in "see"' },
-  { upper:'Κ', lower:'κ', name:'Kappa',   roman:'k',  sound:'as in "keep"' },
-  { upper:'Λ', lower:'λ', name:'Lambda',  roman:'l',  sound:'as in "love"' },
-  { upper:'Μ', lower:'μ', name:'Mu',      roman:'m',  sound:'as in "moon"' },
-  { upper:'Ν', lower:'ν', name:'Nu',      roman:'n',  sound:'as in "no"' },
-  { upper:'Ξ', lower:'ξ', name:'Xi',      roman:'x',  sound:'as in "box"' },
-  { upper:'Ο', lower:'ο', name:'Omicron', roman:'o',  sound:'as in "off"' },
-  { upper:'Π', lower:'π', name:'Pi',      roman:'p',  sound:'as in "put"' },
-  { upper:'Ρ', lower:'ρ', name:'Rho',     roman:'r',  sound:'rolled r' },
-  { upper:'Σ', lower:'σ', name:'Sigma',   roman:'s',  sound:'as in "sun" (ς at end)' },
-  { upper:'Τ', lower:'τ', name:'Tau',     roman:'t',  sound:'as in "top"' },
-  { upper:'Υ', lower:'υ', name:'Upsilon', roman:'y',  sound:'French u or German ü' },
-  { upper:'Φ', lower:'φ', name:'Phi',     roman:'ph', sound:'as in "phone"' },
-  { upper:'Χ', lower:'χ', name:'Chi',     roman:'ch', sound:'as in "Bach" (guttural)' },
-  { upper:'Ψ', lower:'ψ', name:'Psi',     roman:'ps', sound:'as in "lapse"' },
-  { upper:'Ω', lower:'ω', name:'Omega',   roman:'ō',  sound:'as in "go" (long oh)' },
+const AL=[
+{lo:'α',up:'Α',name:'Alpha',gl:'a',say:'AHL-fah',snd:'Like "a" in father',ph:'/a/',
+ ws:[{g:'αγάπη',t:'agápi',m:'Love',e:'❤️',s:'ah-GHAH-pee'},{g:'αέρας',t:'aéras',m:'Air',e:'💨',s:'ah-EH-ras'},{g:'αστέρι',t:'astéri',m:'Star',e:'⭐',s:'ah-STEH-ree'},{g:'αλάτι',t:'aláti',m:'Salt',e:'🧂',s:'ah-LAH-tee'}]},
+{lo:'β',up:'Β',name:'Beta',gl:'b/v',say:'VEE-tah',snd:'Like "v" in very',ph:'/v/',
+ ws:[{g:'βιβλίο',t:'vivlío',m:'Book',e:'📖',s:'veev-LEE-oh'},{g:'βουνό',t:'vounó',m:'Mountain',e:'⛰️',s:'voo-NOH'},{g:'βάρκα',t:'várka',m:'Boat',e:'⛵',s:'VAR-kah'},{g:'βροχή',t:'vrochí',m:'Rain',e:'🌧️',s:'vroh-HEE'}]},
+{lo:'γ',up:'Γ',name:'Gamma',gl:'g/y',say:'GHAH-mah',snd:'Like "y" in yes',ph:'/ɣ/',
+ ws:[{g:'γάλα',t:'gála',m:'Milk',e:'🥛',s:'GHAH-lah'},{g:'γάτα',t:'gáta',m:'Cat',e:'🐱',s:'GHAH-tah'},{g:'γη',t:'gi',m:'Earth',e:'🌍',s:'YEE'},{g:'γέφυρα',t:'géfyra',m:'Bridge',e:'🌉',s:'YEH-fee-rah'}]},
+{lo:'δ',up:'Δ',name:'Delta',gl:'d',say:'THEL-tah',snd:'Like "th" in this',ph:'/ð/',
+ ws:[{g:'δρόμος',t:'drómos',m:'Road',e:'🛣️',s:'THROH-mos'},{g:'δέντρο',t:'déntro',m:'Tree',e:'🌳',s:'THEN-troh'},{g:'δάσος',t:'dásos',m:'Forest',e:'🌲',s:'THAH-sos'},{g:'δελφίνι',t:'delfíni',m:'Dolphin',e:'🐬',s:'thel-FEE-nee'}]},
+{lo:'ε',up:'Ε',name:'Epsilon',gl:'e',say:'EP-see-lon',snd:'Like "e" in met',ph:'/e/',
+ ws:[{g:'ελιά',t:'eliá',m:'Olive',e:'🫒',s:'eh-LYAH'},{g:'ελέφαντας',t:'eléfantas',m:'Elephant',e:'🐘',s:'eh-LEH-fan-das'},{g:'εκκλησία',t:'ekklisía',m:'Church',e:'⛪',s:'ek-lee-SEE-ah'},{g:'εστιατόριο',t:'estiatório',m:'Restaurant',e:'🍽️',s:'es-tee-ah-TOH-ree-oh'}]},
+{lo:'ζ',up:'Ζ',name:'Zeta',gl:'z',say:'ZEE-tah',snd:'Like "z" in zoo',ph:'/z/',
+ ws:[{g:'ζωή',t:'zoí',m:'Life',e:'🌱',s:'zo-EE'},{g:'ζώο',t:'zóo',m:'Animal',e:'🦁',s:'ZOH-oh'},{g:'ζέστη',t:'zésti',m:'Heat',e:'☀️',s:'ZES-tee'},{g:'ζάχαρη',t:'záchari',m:'Sugar',e:'🍬',s:'ZAH-hah-ree'}]},
+{lo:'η',up:'Η',name:'Eta',gl:'i/h',say:'EE-tah',snd:'Like "ee" in feet',ph:'/i/',
+ ws:[{g:'ήλιος',t:'ílios',m:'Sun',e:'☀️',s:'EE-lee-os'},{g:'ηφαίστειο',t:'ifaísteio',m:'Volcano',e:'🌋',s:'ee-FES-tee-oh'},{g:'ήρωας',t:'íroas',m:'Hero',e:'🦸',s:'EE-ro-as'},{g:'ηχώ',t:'ichó',m:'Echo',e:'🔊',s:'ee-HOH'}]},
+{lo:'θ',up:'Θ',name:'Theta',gl:'th',say:'THEE-tah',snd:'Like "th" in think',ph:'/θ/',
+ ws:[{g:'θάλασσα',t:'thálassa',m:'Sea',e:'🌊',s:'THAH-lah-sah'},{g:'θέατρο',t:'théatro',m:'Theatre',e:'🎭',s:'THEH-ah-troh'},{g:'θησαυρός',t:'thisavrós',m:'Treasure',e:'💎',s:'thee-sav-ROHS'},{g:'θυμάρι',t:'thymári',m:'Thyme',e:'🌿',s:'thee-MAH-ree'}]},
+{lo:'ι',up:'Ι',name:'Iota',gl:'i',say:'YO-tah',snd:'Like "ee" in feet',ph:'/i/',
+ ws:[{g:'ιδέα',t:'idéa',m:'Idea',e:'💡',s:'ee-THEH-ah'},{g:'ιστορία',t:'istoría',m:'History',e:'📜',s:'ee-sto-REE-ah'},{g:'ιερός',t:'ierós',m:'Sacred',e:'🙏',s:'ee-eh-ROHS'},{g:'ιπποπόταμος',t:'ippopótamos',m:'Hippo',e:'🦛',s:'ee-po-POH-ta-mos'}]},
+{lo:'κ',up:'Κ',name:'Kappa',gl:'k',say:'KAH-pah',snd:'Like "k" in king',ph:'/k/',
+ ws:[{g:'καφές',t:'kafés',m:'Coffee',e:'☕',s:'kah-FES'},{g:'καρδιά',t:'kardiá',m:'Heart',e:'💙',s:'kar-THYAH'},{g:'κήπος',t:'kípos',m:'Garden',e:'🌺',s:'KEE-pos'},{g:'κύμα',t:'kýma',m:'Wave',e:'🌊',s:'KEE-mah'}]},
+{lo:'λ',up:'Λ',name:'Lambda',gl:'l',say:'LAHM-thah',snd:'Like "l" in lamp',ph:'/l/',
+ ws:[{g:'λεμόνι',t:'lemóni',m:'Lemon',e:'🍋',s:'leh-MOH-nee'},{g:'λέων',t:'léon',m:'Lion',e:'🦁',s:'LEH-on'},{g:'λίμνη',t:'límni',m:'Lake',e:'🏞️',s:'LEEM-nee'},{g:'λύκος',t:'lýkos',m:'Wolf',e:'🐺',s:'LEE-kos'}]},
+{lo:'μ',up:'Μ',name:'Mu',gl:'m',say:'MEE',snd:'Like "m" in mother',ph:'/m/',
+ ws:[{g:'μέλι',t:'méli',m:'Honey',e:'🍯',s:'MEH-lee'},{g:'μήλο',t:'mílo',m:'Apple',e:'🍎',s:'MEE-loh'},{g:'μουσική',t:'mousikí',m:'Music',e:'🎵',s:'moo-see-KEE'},{g:'μπλε',t:'ble',m:'Blue',e:'🔵',s:'BLEH'}]},
+{lo:'ν',up:'Ν',name:'Nu',gl:'n',say:'NEE',snd:'Like "n" in night',ph:'/n/',
+ ws:[{g:'νερό',t:'neró',m:'Water',e:'💧',s:'neh-ROH'},{g:'νύχτα',t:'nýchta',m:'Night',e:'🌃',s:'NEEKH-tah'},{g:'νησί',t:'nisí',m:'Island',e:'🏝️',s:'nee-SEE'},{g:'νέφος',t:'néfos',m:'Cloud',e:'☁️',s:'NEH-fos'}]},
+{lo:'ξ',up:'Ξ',name:'Xi',gl:'x/ks',say:'KSEE',snd:'Like "x" in fox',ph:'/ks/',
+ ws:[{g:'ξύλο',t:'xílo',m:'Wood',e:'🪵',s:'KSEE-loh'},{g:'ξενοδοχείο',t:'xenodocheío',m:'Hotel',e:'🏨',s:'kse-no-tho-HEE-oh'},{g:'ξίφος',t:'xífos',m:'Sword',e:'⚔️',s:'KSEE-fos'},{g:'ξεκούραση',t:'xekúrasi',m:'Rest',e:'😌',s:'kse-KOO-rah-see'}]},
+{lo:'ο',up:'Ο',name:'Omicron',gl:'o',say:'OH-mee-kron',snd:'Like "o" in rock',ph:'/o/',
+ ws:[{g:'όνομα',t:'ónoma',m:'Name',e:'🏷️',s:'OH-no-mah'},{g:'ουρανός',t:'ouranós',m:'Sky',e:'🌤️',s:'oo-rah-NOHS'},{g:'οδός',t:'odós',m:'Street',e:'🚦',s:'oh-THOHS'},{g:'όρος',t:'óros',m:'Mountain',e:'🏔️',s:'OH-ros'}]},
+{lo:'π',up:'Π',name:'Pi',gl:'p',say:'PEE',snd:'Like "p" in pen',ph:'/p/',
+ ws:[{g:'πόλη',t:'póli',m:'City',e:'🏙️',s:'POH-lee'},{g:'παραλία',t:'paralía',m:'Beach',e:'🏖️',s:'pah-rah-LEE-ah'},{g:'πουλί',t:'poulí',m:'Bird',e:'🐦',s:'poo-LEE'},{g:'πύργος',t:'pýrgos',m:'Tower',e:'🗼',s:'PEER-ghos'}]},
+{lo:'ρ',up:'Ρ',name:'Rho',gl:'r',say:'ROH',snd:'Like "r" in run (slightly rolled)',ph:'/r/',
+ ws:[{g:'ρόδο',t:'ródo',m:'Rose',e:'🌹',s:'ROH-thoh'},{g:'ρέμα',t:'réma',m:'Stream',e:'🏞️',s:'REH-mah'},{g:'ρακέτα',t:'rakéta',m:'Racket',e:'🎾',s:'rah-KEH-tah'},{g:'ρολόι',t:'rolói',m:'Clock',e:'⌚',s:'roh-LOH-ee'}]},
+{lo:'σ/ς',up:'Σ',name:'Sigma',gl:'s',say:'SEEG-mah',snd:'Like "s" in sun',ph:'/s/',
+ ws:[{g:'σπίτι',t:'spíti',m:'Home',e:'🏠',s:'SPEE-tee'},{g:'σκύλος',t:'skýlos',m:'Dog',e:'🐶',s:'SKEE-los'},{g:'σταφύλι',t:'stafýli',m:'Grape',e:'🍇',s:'stah-FEE-lee'},{g:'σελήνη',t:'selíni',m:'Moon',e:'🌙',s:'seh-LEE-nee'}]},
+{lo:'τ',up:'Τ',name:'Tau',gl:'t',say:'TAHF',snd:'Like "t" in top',ph:'/t/',
+ ws:[{g:'τραγούδι',t:'tragoúdi',m:'Song',e:'🎵',s:'trah-GHOO-thee'},{g:'τριαντάφυλλο',t:'triantáfyllo',m:'Rose',e:'🥀',s:'tree-an-TAH-fee-loh'},{g:'τυρί',t:'tyrí',m:'Cheese',e:'🧀',s:'tee-REE'},{g:'τοίχος',t:'toíchos',m:'Wall',e:'🧱',s:'TEE-hos'}]},
+{lo:'υ',up:'Υ',name:'Upsilon',gl:'y/i',say:'EEP-see-lon',snd:'Like "ee" in feet',ph:'/i/',
+ ws:[{g:'ύπνος',t:'ípnos',m:'Sleep',e:'😴',s:'EEP-nos'},{g:'ύδωρ',t:'ídor',m:'Water (formal)',e:'💦',s:'EE-thor'},{g:'υπέροχος',t:'ypérochos',m:'Wonderful',e:'✨',s:'ee-PEH-ro-hos'},{g:'υγεία',t:'ygeía',m:'Health',e:'💪',s:'ee-YEE-ah'}]},
+{lo:'φ',up:'Φ',name:'Phi',gl:'f/ph',say:'FEE',snd:'Like "f" in fire',ph:'/f/',
+ ws:[{g:'φιλία',t:'filía',m:'Friendship',e:'🤝',s:'fee-LEE-ah'},{g:'φεγγάρι',t:'fengári',m:'Moon',e:'🌕',s:'fen-GAH-ree'},{g:'φωτιά',t:'fotiá',m:'Fire',e:'🔥',s:'fo-TYAH'},{g:'φύση',t:'fýsi',m:'Nature',e:'🍃',s:'FEE-see'}]},
+{lo:'χ',up:'Χ',name:'Chi',gl:'ch/x',say:'HEE',snd:'Like "ch" in loch',ph:'/x/',
+ ws:[{g:'χαρά',t:'chará',m:'Joy',e:'😊',s:'hah-RAH'},{g:'χρόνος',t:'chrónos',m:'Time',e:'⏳',s:'HROH-nos'},{g:'χιόνι',t:'chióni',m:'Snow',e:'❄️',s:'HYO-nee'},{g:'χελώνα',t:'chelóna',m:'Tortoise',e:'🐢',s:'heh-LOH-nah'}]},
+{lo:'ψ',up:'Ψ',name:'Psi',gl:'ps',say:'PSEE',snd:'Like "ps" in cups',ph:'/ps/',
+ ws:[{g:'ψωμί',t:'psomí',m:'Bread',e:'🍞',s:'pso-MEE'},{g:'ψάρι',t:'psári',m:'Fish',e:'🐟',s:'PSAH-ree'},{g:'ψυχή',t:'psychí',m:'Soul',e:'🕊️',s:'psee-HEE'},{g:'ψηλός',t:'psilós',m:'Tall',e:'📏',s:'psee-LOHS'}]},
+{lo:'ω',up:'Ω',name:'Omega',gl:'o/w',say:'oh-MEH-gah',snd:'Like "o" in rock',ph:'/o/',
+ ws:[{g:'ώρα',t:'óra',m:'Hour',e:'⏰',s:'OH-rah'},{g:'ωκεανός',t:'okeanós',m:'Ocean',e:'🌊',s:'oh-keh-ah-NOHS'},{g:'ώμος',t:'ómos',m:'Shoulder',e:'🤷',s:'OH-mos'},{g:'ωραίος',t:'oraíos',m:'Beautiful',e:'😍',s:'oh-REH-os'}]}
+];
+const WC=[
+{cat:'Greetings',ws:[
+{g:'γεια σου',e:'hello / hi',gl:'yia sou',s:'YAH-soo'},{g:'γεια σας',e:'hello (formal)',gl:'yia sas',s:'YAH-sas'},
+{g:'καλημέρα',e:'good morning',gl:'kalimera',s:'kah-lee-MEH-rah'},{g:'καλησπέρα',e:'good evening',gl:'kalispera',s:'kah-lee-SPEH-rah'},
+{g:'καληνύχτα',e:'good night',gl:'kalinychta',s:'kah-lee-NEEKH-tah'},{g:'αντίο',e:'goodbye',gl:'antio',s:'AN-tee-oh'},
+{g:'τα λέμε',e:'see you later',gl:'ta leme',s:'tah-LEH-meh'},{g:'χαίρετε',e:'greetings (formal)',gl:'cherete',s:'HEH-reh-teh'},
+{g:'καλώς ήρθατε',e:'welcome',gl:'kalos irthate',s:'kah-LOHS EER-thah-teh'},{g:'τι κάνεις',e:'how are you?',gl:'ti kanis',s:'tee KAH-nees'},
+{g:'πολύ καλά',e:'very well',gl:'poly kala',s:'poh-LEE kah-LAH'},{g:'εντάξει',e:'OK / alright',gl:'endaksei',s:'en-DAH-ksee'},
+{g:'ευχαριστώ',e:'thank you',gl:'efcharisto',s:'ef-hah-rees-TOH'},{g:'παρακαλώ',e:'please / you\'re welcome',gl:'parakalo',s:'pah-rah-kah-LOH'},
+{g:'συγνώμη',e:'sorry / excuse me',gl:'signomi',s:'seeg-NOH-mee'},{g:'βοήθεια',e:'help',gl:'voithia',s:'voh-EE-thee-ah'},
+]},
+{cat:'Essentials',ws:[
+{g:'ναι',e:'yes',gl:'nai',s:'NEH'},{g:'όχι',e:'no',gl:'ochi',s:'OH-hee'},
+{g:'καταλαβαίνω',e:'I understand',gl:'katalavaino',s:'kah-tah-lah-VEH-noh'},{g:'δεν καταλαβαίνω',e:'I don\'t understand',gl:'den katalavaino',s:'then kah-tah-lah-VEH-noh'},
+{g:'μιλάτε αγγλικά',e:'do you speak English?',gl:'milate agglika',s:'mee-LAH-teh ang-lee-KAH'},{g:'δεν ξέρω',e:'I don\'t know',gl:'den xero',s:'then KSEH-roh'},
+{g:'μπορείτε να βοηθήσετε',e:'can you help me?',gl:'borite na voithisete',s:'boh-REE-teh nah voh-ee-THEE-seh-teh'},{g:'πού είναι',e:'where is',gl:'pou einai',s:'POO EE-neh'},
+{g:'πόσο κάνει',e:'how much is it?',gl:'poso kanei',s:'POH-soh KAH-nee'},{g:'ανοιχτό',e:'open',gl:'anoichto',s:'ah-neekh-TOH'},
+{g:'κλειστό',e:'closed',gl:'kleisto',s:'klee-STOH'},{g:'δωρεάν',e:'free (no charge)',gl:'dorean',s:'tho-reh-AN'},
+]},
+{cat:'Numbers',ws:[
+{g:'μηδέν',e:'zero',gl:'miden',s:'mee-THEN'},{g:'ένα',e:'one',gl:'ena',s:'EH-nah'},
+{g:'δύο',e:'two',gl:'dyo',s:'THEE-oh'},{g:'τρία',e:'three',gl:'tria',s:'TREE-ah'},
+{g:'τέσσερα',e:'four',gl:'tessera',s:'TES-seh-rah'},{g:'πέντε',e:'five',gl:'pente',s:'PEN-teh'},
+{g:'έξι',e:'six',gl:'exi',s:'EK-see'},{g:'επτά',e:'seven',gl:'epta',s:'ep-TAH'},
+{g:'οκτώ',e:'eight',gl:'okto',s:'ok-TOH'},{g:'εννέα',e:'nine',gl:'ennea',s:'en-NEH-ah'},
+{g:'δέκα',e:'ten',gl:'deka',s:'THEH-kah'},{g:'έντεκα',e:'eleven',gl:'enteka',s:'EN-teh-kah'},
+{g:'δώδεκα',e:'twelve',gl:'dodeka',s:'THOH-theh-kah'},{g:'δεκατρία',e:'thirteen',gl:'dekatria',s:'theh-kah-TREE-ah'},
+{g:'δεκατέσσερα',e:'fourteen',gl:'dekatessera',s:'theh-kah-TES-seh-rah'},{g:'δεκαπέντε',e:'fifteen',gl:'dekapente',s:'theh-kah-PEN-teh'},
+{g:'είκοσι',e:'twenty',gl:'eikosi',s:'EE-koh-see'},{g:'τριάντα',e:'thirty',gl:'trianta',s:'tree-AN-tah'},
+{g:'σαράντα',e:'forty',gl:'saranta',s:'sah-RAN-tah'},{g:'πενήντα',e:'fifty',gl:'peninta',s:'peh-NEEN-tah'},
+{g:'εξήντα',e:'sixty',gl:'exinta',s:'ek-SEEN-tah'},{g:'εβδομήντα',e:'seventy',gl:'evdominta',s:'ev-thoh-MEEN-tah'},
+{g:'ογδόντα',e:'eighty',gl:'ogdonta',s:'ohg-THON-tah'},{g:'ενενήντα',e:'ninety',gl:'eneninta',s:'eh-neh-NEEN-tah'},
+{g:'εκατό',e:'hundred',gl:'ekato',s:'eh-kah-TOH'},{g:'πεντακόσια',e:'five hundred',gl:'pentakosia',s:'pen-tah-KOH-see-ah'},
+{g:'χίλιοι',e:'thousand',gl:'chilioi',s:'HEE-lee-ee'},{g:'εκατομμύριο',e:'million',gl:'ekatommyrio',s:'eh-kah-toh-MEE-ree-oh'},
+{g:'πρώτος',e:'first',gl:'protos',s:'PROH-tos'},{g:'δεύτερος',e:'second',gl:'defтeros',s:'THEF-teh-ros'},
+{g:'τρίτος',e:'third',gl:'tritos',s:'TREE-tos'},{g:'τελευταίος',e:'last',gl:'teleftaios',s:'teh-lef-TEH-os'},
+{g:'μισός',e:'half',gl:'misos',s:'mee-SOHS'},{g:'διπλός',e:'double',gl:'diplos',s:'theep-LOHS'},
+]},
+{cat:'Time',ws:[
+{g:'σήμερα',e:'today',gl:'simera',s:'SEE-meh-rah'},{g:'αύριο',e:'tomorrow',gl:'avrio',s:'AV-ree-oh'},
+{g:'χθες',e:'yesterday',gl:'chthes',s:'KHTHES'},{g:'τώρα',e:'now',gl:'tora',s:'TOH-rah'},
+{g:'μετά',e:'after / later',gl:'meta',s:'meh-TAH'},{g:'πριν',e:'before',gl:'prin',s:'PREEN'},
+{g:'ώρα',e:'hour / time',gl:'ora',s:'OH-rah'},{g:'λεπτό',e:'minute',gl:'lepto',s:'lep-TOH'},
+{g:'μέρα',e:'day',gl:'mera',s:'MEH-rah'},{g:'εβδομάδα',e:'week',gl:'evdomada',s:'ev-tho-MAH-thah'},
+{g:'μήνας',e:'month',gl:'minas',s:'MEE-nas'},{g:'χρόνος',e:'year',gl:'chronos',s:'HROH-nos'},
+{g:'πρωί',e:'morning',gl:'proi',s:'pro-EE'},{g:'μεσημέρι',e:'midday',gl:'mesimeri',s:'meh-see-MEH-ree'},
+{g:'απόγευμα',e:'afternoon',gl:'apoyevma',s:'ah-POH-yev-mah'},{g:'βράδυ',e:'evening',gl:'vradi',s:'VRAH-thee'},
+{g:'νύχτα',e:'night',gl:'nychta',s:'NEEKH-tah'},{g:'Δευτέρα',e:'Monday',gl:'Deftera',s:'thef-TEH-rah'},
+{g:'Τρίτη',e:'Tuesday',gl:'Triti',s:'TREE-tee'},{g:'Τετάρτη',e:'Wednesday',gl:'Tetarti',s:'teh-TAR-tee'},
+{g:'Πέμπτη',e:'Thursday',gl:'Pempti',s:'PEMP-tee'},{g:'Παρασκευή',e:'Friday',gl:'Paraskevi',s:'pah-ras-keh-VEE'},
+{g:'Σάββατο',e:'Saturday',gl:'Savvato',s:'SAH-vah-toh'},{g:'Κυριακή',e:'Sunday',gl:'Kyriaki',s:'kee-ree-ah-KEE'},
+{g:'Ιανουάριος',e:'January',gl:'Ianouarios',s:'ee-ah-noo-AH-ree-os'},{g:'Φεβρουάριος',e:'February',gl:'Fevrouarios',s:'fev-roo-AH-ree-os'},
+{g:'Μάρτιος',e:'March',gl:'Martios',s:'MAR-tee-os'},{g:'Απρίλιος',e:'April',gl:'Aprilios',s:'ah-PREE-lee-os'},
+{g:'Μάιος',e:'May',gl:'Maios',s:'MAH-ee-os'},{g:'Ιούνιος',e:'June',gl:'Iounios',s:'ee-OO-nyos'},
+{g:'Ιούλιος',e:'July',gl:'Ioulios',s:'ee-OO-lyos'},{g:'Αύγουστος',e:'August',gl:'Avgoustos',s:'AV-ghoos-tos'},
+{g:'Σεπτέμβριος',e:'September',gl:'Septemvrios',s:'sep-TEM-vree-os'},{g:'Οκτώβριος',e:'October',gl:'Oktovrios',s:'ok-TOH-vree-os'},
+{g:'Νοέμβριος',e:'November',gl:'Noevrios',s:'no-EV-ree-os'},{g:'Δεκέμβριος',e:'December',gl:'Dekemvrios',s:'theh-KEM-vree-os'},
+{g:'εποχή',e:'season',gl:'epochi',s:'eh-poh-HEE'},{g:'άνοιξη',e:'spring',gl:'anoixi',s:'AH-neek-see'},
+{g:'καλοκαίρι',e:'summer',gl:'kalokairi',s:'kah-loh-KEH-ree'},{g:'φθινόπωρο',e:'autumn',gl:'fthinoporo',s:'fthee-NOH-poh-roh'},
+{g:'χειμώνας',e:'winter',gl:'cheimonas',s:'hee-MOH-nas'},
+]},
+{cat:'People & Family',ws:[
+{g:'άνθρωπος',e:'person / human',gl:'anthropos',s:'AN-thro-pos'},{g:'άντρας',e:'man',gl:'antras',s:'AN-dras'},
+{g:'γυναίκα',e:'woman',gl:'gynaika',s:'ghee-NEH-kah'},{g:'παιδί',e:'child',gl:'paidi',s:'peh-THEE'},
+{g:'μωρό',e:'baby',gl:'moro',s:'mo-ROH'},{g:'έφηβος',e:'teenager',gl:'efivos',s:'EH-fee-vos'},
+{g:'ενήλικας',e:'adult',gl:'enilikas',s:'eh-NEE-lee-kas'},{g:'ηλικιωμένος',e:'elderly',gl:'ilikimenos',s:'ee-lee-kee-oh-MEH-nos'},
+{g:'οικογένεια',e:'family',gl:'oikogeneia',s:'ee-koh-YEH-nee-ah'},{g:'μαμά',e:'mum',gl:'mama',s:'mah-MAH'},
+{g:'μπαμπάς',e:'dad',gl:'babas',s:'bah-BAHS'},{g:'γονείς',e:'parents',gl:'goneis',s:'ghoh-NEES'},
+{g:'αδερφός',e:'brother',gl:'aderfos',s:'ah-ther-FOHS'},{g:'αδερφή',e:'sister',gl:'aderfi',s:'ah-ther-FEE'},
+{g:'παππούς',e:'grandfather',gl:'pappous',s:'pah-POOS'},{g:'γιαγιά',e:'grandmother',gl:'yiayia',s:'yah-YAH'},
+{g:'γιος',e:'son',gl:'yios',s:'YOHS'},{g:'κόρη',e:'daughter',gl:'kori',s:'KOH-ree'},
+{g:'θείος',e:'uncle',gl:'theios',s:'THEE-ohs'},{g:'θεία',e:'aunt',gl:'theia',s:'THEE-ah'},
+{g:'ξάδερφος',e:'cousin (male)',gl:'xaderfos',s:'KSAH-ther-fos'},{g:'σύζυγος',e:'spouse',gl:'syzygos',s:'SEE-zee-ghos'},
+{g:'φίλος',e:'friend (male)',gl:'filos',s:'FEE-los'},{g:'φίλη',e:'friend (female)',gl:'fili',s:'FEE-lee'},
+{g:'γείτονας',e:'neighbour',gl:'geitonas',s:'GHEE-toh-nas'},{g:'συνάδελφος',e:'colleague',gl:'synadelfos',s:'see-NAH-thel-fos'},
+{g:'αγαπημένος',e:'loved one',gl:'agapimenos',s:'ah-gah-pee-MEH-nos'},
+]},
+{cat:'Body',ws:[
+{g:'κεφάλι',e:'head',gl:'kefali',s:'keh-FAH-lee'},{g:'μάτι',e:'eye',gl:'mati',s:'MAH-tee'},
+{g:'αυτί',e:'ear',gl:'afti',s:'af-TEE'},{g:'μύτη',e:'nose',gl:'myti',s:'MEE-tee'},
+{g:'στόμα',e:'mouth',gl:'stoma',s:'STOH-mah'},{g:'δόντι',e:'tooth',gl:'donti',s:'THON-tee'},
+{g:'γλώσσα',e:'tongue / language',gl:'glossa',s:'GHLO-sah'},{g:'χείλος',e:'lip',gl:'cheilos',s:'HEE-los'},
+{g:'μάγουλο',e:'cheek',gl:'magoulo',s:'MAH-ghoo-loh'},{g:'μέτωπο',e:'forehead',gl:'metopo',s:'MEH-toh-poh'},
+{g:'μαλλιά',e:'hair',gl:'mallia',s:'mah-LYAH'},{g:'λαιμός',e:'neck / throat',gl:'laimos',s:'leh-MOHS'},
+{g:'ώμος',e:'shoulder',gl:'omos',s:'OH-mos'},{g:'χέρι',e:'hand / arm',gl:'cheri',s:'HEH-ree'},
+{g:'αγκώνας',e:'elbow',gl:'ankonas',s:'an-KOH-nas'},{g:'δάχτυλο',e:'finger',gl:'dachtilo',s:'THAH-ktee-loh'},
+{g:'νύχι',e:'nail',gl:'nychi',s:'NEE-hee'},{g:'πλάτη',e:'back',gl:'plati',s:'PLAH-tee'},
+{g:'στήθος',e:'chest',gl:'stithos',s:'STEE-thos'},{g:'κοιλιά',e:'stomach / belly',gl:'koilia',s:'kee-LYAH'},
+{g:'πόδι',e:'foot / leg',gl:'podi',s:'POH-thee'},{g:'γόνατο',e:'knee',gl:'gonato',s:'GHOH-nah-toh'},
+{g:'καρδιά',e:'heart',gl:'kardia',s:'kar-THYAH'},{g:'πνεύμονας',e:'lung',gl:'pnevmonas',s:'PNEV-moh-nas'},
+{g:'αίμα',e:'blood',gl:'aima',s:'EH-mah'},{g:'δέρμα',e:'skin',gl:'derma',s:'THER-mah'},
+{g:'μυ',e:'muscle',gl:'my',s:'MEE'},{g:'οστό',e:'bone',gl:'osto',s:'os-TOH'},
+]},
+{cat:'Food & Drink',ws:[
+{g:'νερό',e:'water',gl:'nero',s:'neh-ROH'},{g:'καφές',e:'coffee',gl:'kafes',s:'kah-FES'},
+{g:'τσάι',e:'tea',gl:'tsai',s:'TSAH-ee'},{g:'κρασί',e:'wine',gl:'krasi',s:'krah-SEE'},
+{g:'μπύρα',e:'beer',gl:'byra',s:'BEE-rah'},{g:'χυμός',e:'juice',gl:'chymos',s:'hee-MOHS'},
+{g:'γάλα',e:'milk',gl:'gala',s:'GHAH-lah'},{g:'ψωμί',e:'bread',gl:'psomi',s:'pso-MEE'},
+{g:'τυρί',e:'cheese',gl:'tyri',s:'tee-REE'},{g:'κρέας',e:'meat',gl:'kreas',s:'KREH-as'},
+{g:'κοτόπουλο',e:'chicken',gl:'kotopulo',s:'koh-TOH-poo-loh'},{g:'ψάρι',e:'fish',gl:'psari',s:'PSAH-ree'},
+{g:'λαχανικά',e:'vegetables',gl:'lachanika',s:'lah-hah-nee-KAH'},{g:'φρούτα',e:'fruit',gl:'frouta',s:'FROO-tah'},
+{g:'σαλάτα',e:'salad',gl:'salata',s:'sah-LAH-tah'},{g:'σούπα',e:'soup',gl:'soupa',s:'SOO-pah'},
+{g:'αυγό',e:'egg',gl:'avgo',s:'av-GHOH'},{g:'βούτυρο',e:'butter',gl:'voutiro',s:'VOO-tee-roh'},
+{g:'λάδι',e:'oil',gl:'ladi',s:'LAH-thee'},{g:'αλάτι',e:'salt',gl:'alati',s:'ah-LAH-tee'},
+{g:'πιπέρι',e:'pepper (spice)',gl:'piperi',s:'pee-PEH-ree'},{g:'ζάχαρη',e:'sugar',gl:'zachari',s:'ZAH-hah-ree'},
+{g:'μέλι',e:'honey',gl:'meli',s:'MEH-lee'},{g:'ρύζι',e:'rice',gl:'ryzi',s:'REE-zee'},
+{g:'μακαρόνια',e:'pasta',gl:'makaronia',s:'mah-kah-ROH-nyah'},{g:'πατάτα',e:'potato',gl:'patata',s:'pah-TAH-tah'},
+{g:'ντομάτα',e:'tomato',gl:'domata',s:'doh-MAH-tah'},{g:'κρεμμύδι',e:'onion',gl:'kremmydi',s:'kreh-MEE-thee'},
+{g:'σκόρδο',e:'garlic',gl:'skordo',s:'SKOR-thoh'},{g:'πιπεριά',e:'pepper (veg)',gl:'piperia',s:'pee-peh-RYAH'},
+{g:'αγγούρι',e:'cucumber',gl:'angoori',s:'an-GHOO-ree'},{g:'καρότο',e:'carrot',gl:'karoto',s:'kah-ROH-toh'},
+{g:'μαρούλι',e:'lettuce',gl:'marouli',s:'mah-ROO-lee'},{g:'λεμόνι',e:'lemon',gl:'lemoni',s:'leh-MOH-nee'},
+{g:'πορτοκάλι',e:'orange',gl:'portokali',s:'por-toh-KAH-lee'},{g:'μήλο',e:'apple',gl:'milo',s:'MEE-loh'},
+{g:'σταφύλι',e:'grape',gl:'stafyli',s:'stah-FEE-lee'},{g:'κεράσι',e:'cherry',gl:'kerasi',s:'keh-RAH-see'},
+{g:'φράουλα',e:'strawberry',gl:'fraoula',s:'FRAH-oo-lah'},{g:'καρπούζι',e:'watermelon',gl:'karpouzi',s:'kar-POO-zee'},
+{g:'μπανάνα',e:'banana',gl:'banana',s:'bah-NAH-nah'},{g:'ροδάκινο',e:'peach',gl:'rodakino',s:'roh-THAH-kee-noh'},
+{g:'αχλάδι',e:'pear',gl:'achladi',s:'ah-HLAH-thee'},{g:'γιαούρτι',e:'yoghurt',gl:'giaourti',s:'yah-OOR-tee'},
+{g:'παγωτό',e:'ice cream',gl:'pagoto',s:'pah-ghoh-TOH'},{g:'κέικ',e:'cake',gl:'keik',s:'KEEK'},
+{g:'μπισκότο',e:'biscuit',gl:'biskoto',s:'bees-KOH-toh'},{g:'σοκολάτα',e:'chocolate',gl:'sokolata',s:'so-koh-LAH-tah'},
+{g:'πρόγευμα',e:'breakfast',gl:'proyevma',s:'PROH-yev-mah'},{g:'μεσημεριανό',e:'lunch',gl:'mesimerianos',s:'meh-see-meh-ree-ah-NOH'},
+{g:'βραδινό',e:'dinner',gl:'vradino',s:'vrah-thee-NOH'},{g:'σνακ',e:'snack',gl:'snak',s:'SNAK'},
+]},
+{cat:'Places',ws:[
+{g:'σπίτι',e:'house / home',gl:'spiti',s:'SPEE-tee'},{g:'δωμάτιο',e:'room',gl:'domatio',s:'thoh-MAH-tee-oh'},
+{g:'κουζίνα',e:'kitchen',gl:'kouzina',s:'koo-ZEE-nah'},{g:'μπάνιο',e:'bathroom',gl:'banio',s:'BAH-nyoh'},
+{g:'υπνοδωμάτιο',e:'bedroom',gl:'ypnodomatio',s:'eep-noh-thoh-MAH-tee-oh'},{g:'σαλόνι',e:'living room',gl:'saloni',s:'sah-LOH-nee'},
+{g:'δρόμος',e:'road / street',gl:'dromos',s:'THROH-mos'},{g:'πλατεία',e:'square / plaza',gl:'plateia',s:'plah-TEE-ah'},
+{g:'πόλη',e:'city',gl:'poli',s:'POH-lee'},{g:'χωριό',e:'village',gl:'chorio',s:'hoh-RYOH'},
+{g:'χώρα',e:'country',gl:'chora',s:'HOH-rah'},{g:'παραλία',e:'beach',gl:'paralia',s:'pah-rah-LEE-ah'},
+{g:'βουνό',e:'mountain',gl:'vouno',s:'voo-NOH'},{g:'δάσος',e:'forest',gl:'dasos',s:'THAH-sos'},
+{g:'λιμάνι',e:'harbour / port',gl:'limani',s:'lee-MAH-nee'},{g:'αεροδρόμιο',e:'airport',gl:'aerodromio',s:'ah-eh-ro-THROH-mee-oh'},
+{g:'σταθμός',e:'station',gl:'stathmos',s:'STATH-mos'},{g:'νοσοκομείο',e:'hospital',gl:'nosokomeio',s:'no-so-koh-MEE-oh'},
+{g:'φαρμακείο',e:'pharmacy',gl:'farmakeio',s:'far-mah-KEE-oh'},{g:'σχολείο',e:'school',gl:'scholeio',s:'scho-LEE-oh'},
+{g:'πανεπιστήμιο',e:'university',gl:'panepistimio',s:'pah-neh-pees-TEE-mee-oh'},{g:'βιβλιοθήκη',e:'library',gl:'vivliothiki',s:'veev-lee-oh-THEE-kee'},
+{g:'μουσείο',e:'museum',gl:'mouseio',s:'moo-SEE-oh'},{g:'εκκλησία',e:'church',gl:'ekklisia',s:'ek-lee-SEE-ah'},
+{g:'αγορά',e:'market',gl:'agora',s:'ah-goh-RAH'},{g:'εστιατόριο',e:'restaurant',gl:'estiatorio',s:'es-tee-ah-TOH-ree-oh'},
+{g:'καφετερία',e:'café',gl:'kafeteria',s:'kah-feh-teh-REE-ah'},{g:'ξενοδοχείο',e:'hotel',gl:'xenodocheio',s:'kse-no-tho-HEE-oh'},
+{g:'τράπεζα',e:'bank',gl:'trapeza',s:'TRAH-peh-zah'},{g:'ταχυδρομείο',e:'post office',gl:'tachidromio',s:'tah-hee-throh-MEE-oh'},
+{g:'αστυνομία',e:'police',gl:'astynomia',s:'as-tee-no-MEE-ah'},{g:'πυροσβεστική',e:'fire brigade',gl:'pyrosvestiki',s:'pee-ros-ves-tee-KEE'},
+{g:'πάρκο',e:'park',gl:'parko',s:'PAR-koh'},{g:'κήπος',e:'garden',gl:'kipos',s:'KEE-pos'},
+{g:'γέφυρα',e:'bridge',gl:'gefyra',s:'YEH-fee-rah'},{g:'νησί',e:'island',gl:'nisi',s:'nee-SEE'},
+{g:'σούπερ μάρκετ',e:'supermarket',gl:'super market',s:'SOO-per MAR-ket'},{g:'κέντρο',e:'centre / downtown',gl:'kentro',s:'KEN-troh'},
+{g:'προάστιο',e:'suburb',gl:'proastio',s:'proh-AHS-tee-oh'},{g:'γειτονιά',e:'neighbourhood',gl:'geitonia',s:'ghee-toh-NYAH'},
+]},
+{cat:'Transport',ws:[
+{g:'αυτοκίνητο',e:'car',gl:'aftokinito',s:'af-toh-KEE-nee-toh'},{g:'λεωφορείο',e:'bus',gl:'leoforeio',s:'leh-oh-foh-REE-oh'},
+{g:'τρένο',e:'train',gl:'treno',s:'TREH-noh'},{g:'μετρό',e:'metro',gl:'metro',s:'meh-TROH'},
+{g:'ταξί',e:'taxi',gl:'taxi',s:'tak-SEE'},{g:'πλοίο',e:'ship / boat',gl:'ploio',s:'PLEE-oh'},
+{g:'αεροπλάνο',e:'aeroplane',gl:'aeroplano',s:'ah-eh-roh-PLAH-noh'},{g:'ελικόπτερο',e:'helicopter',gl:'elikoptero',s:'eh-lee-KOP-teh-roh'},
+{g:'ποδήλατο',e:'bicycle',gl:'podilato',s:'poh-THEE-lah-toh'},{g:'μοτοσικλέτα',e:'motorbike',gl:'motosikleta',s:'moh-toh-seek-LEH-tah'},
+{g:'εισιτήριο',e:'ticket',gl:'eisitiri',s:'ee-see-TEE-ree-oh'},{g:'στάση',e:'stop (bus/tram)',gl:'stasi',s:'STAH-see'},
+{g:'πεζοδρόμιο',e:'pavement',gl:'pezodromio',s:'peh-zo-THROH-mee-oh'},{g:'διάβαση',e:'pedestrian crossing',gl:'diavasi',s:'thee-AH-vah-see'},
+{g:'βενζίνη',e:'petrol / fuel',gl:'venzini',s:'ven-ZEE-nee'},{g:'οδηγός',e:'driver',gl:'odigos',s:'oh-thee-GHOHS'},
+{g:'κυκλοφορία',e:'traffic',gl:'kyklofornia',s:'kee-kloh-foh-REE-ah'},{g:'αγκαλιά',e:'hug / embrace',gl:'agkalia',s:'an-gah-LYAH'},
+{g:'αποβάθρα',e:'platform / quay',gl:'apovatra',s:'ah-poh-VATH-rah'},{g:'χάρτης',e:'map',gl:'chartis',s:'HAHR-tees'},
+]},
+{cat:'Nature',ws:[
+{g:'ήλιος',e:'sun',gl:'ilios',s:'EE-lee-os'},{g:'φεγγάρι',e:'moon',gl:'fengari',s:'fen-GAH-ree'},
+{g:'αστέρι',e:'star',gl:'asteri',s:'ah-STEH-ree'},{g:'ουρανός',e:'sky',gl:'ouranos',s:'oo-rah-NOHS'},
+{g:'σύννεφο',e:'cloud',gl:'synefo',s:'SEE-neh-foh'},{g:'βροχή',e:'rain',gl:'vrochi',s:'vroh-HEE'},
+{g:'χιόνι',e:'snow',gl:'chioni',s:'HYO-nee'},{g:'άνεμος',e:'wind',gl:'anemos',s:'AH-neh-mos'},
+{g:'καταιγίδα',e:'thunderstorm',gl:'kataigida',s:'kah-teh-YEE-thah'},{g:'αστραπή',e:'lightning',gl:'astrapi',s:'as-trah-PEE'},
+{g:'βροντή',e:'thunder',gl:'vronti',s:'vron-TEE'},{g:'ομίχλη',e:'fog',gl:'omichli',s:'oh-MEEKH-lee'},
+{g:'ουράνιο τόξο',e:'rainbow',gl:'ouranio toxo',s:'oo-RAH-nyoh TOK-soh'},{g:'δέντρο',e:'tree',gl:'dentro',s:'THEN-troh'},
+{g:'λουλούδι',e:'flower',gl:'louloudi',s:'loo-LOO-thee'},{g:'γρασίδι',e:'grass',gl:'grasidi',s:'grah-SEE-thee'},
+{g:'θάλασσα',e:'sea',gl:'thalassa',s:'THAH-lah-sah'},{g:'ποτάμι',e:'river',gl:'potami',s:'poh-TAH-mee'},
+{g:'λίμνη',e:'lake',gl:'limni',s:'LEEM-nee'},{g:'βράχος',e:'rock / cliff',gl:'vrachos',s:'VRAH-hos'},
+{g:'άμμος',e:'sand',gl:'ammos',s:'AH-mos'},{g:'πέτρα',e:'stone',gl:'petra',s:'PEH-trah'},
+{g:'χώμα',e:'soil',gl:'choma',s:'HOH-mah'},{g:'φύλλο',e:'leaf',gl:'fyllo',s:'FEE-loh'},
+{g:'φύση',e:'nature',gl:'fysi',s:'FEE-see'},{g:'ηφαίστειο',e:'volcano',gl:'ifaisteio',s:'ee-FES-tee-oh'},
+{g:'σπήλαιο',e:'cave',gl:'spileio',s:'SPEE-lee-oh'},{g:'έρημος',e:'desert',gl:'erimos',s:'EH-ree-mos'},
+{g:'πάγος',e:'ice',gl:'pagos',s:'PAH-ghos'},{g:'χιονοθύελλα',e:'blizzard',gl:'chionothyella',s:'hyo-no-THEE-el-lah'},
+{g:'μπόρα',e:'shower (rain)',gl:'bora',s:'BOH-rah'},{g:'πλανήτης',e:'planet',gl:'planitis',s:'plah-NEE-tees'},
+]},
+{cat:'Animals',ws:[
+{g:'σκύλος',e:'dog',gl:'skylos',s:'SKEE-los'},{g:'γάτα',e:'cat',gl:'gata',s:'GHAH-tah'},
+{g:'άλογο',e:'horse',gl:'alogo',s:'AH-loh-gho'},{g:'αγελάδα',e:'cow',gl:'agelada',s:'ah-yeh-LAH-thah'},
+{g:'πρόβατο',e:'sheep',gl:'provato',s:'PROH-vah-toh'},{g:'κατσίκα',e:'goat',gl:'katsika',s:'kat-SEE-kah'},
+{g:'γουρούνι',e:'pig',gl:'gouroni',s:'ghoo-ROO-nee'},{g:'ξύδι',e:'vinegar',gl:'xydi',s:'KSEE-thee'},
+{g:'πουλί',e:'bird',gl:'pouli',s:'poo-LEE'},{g:'περιοδικό',e:'magazine',gl:'periodiko',s:'peh-ree-oh-thee-KOH'},
+{g:'φίδι',e:'snake',gl:'fidi',s:'FEE-thee'},{g:'λέων',e:'lion',gl:'leon',s:'LEH-on'},
+{g:'τίγρης',e:'tiger',gl:'tigris',s:'TEEG-rees'},{g:'ελέφαντας',e:'elephant',gl:'elefantas',s:'eh-LEH-fan-das'},
+{g:'καμηλοπάρδαλη',e:'giraffe',gl:'kamilopardali',s:'kah-mee-loh-PAR-thah-lee'},{g:'αρκούδα',e:'bear',gl:'arkouda',s:'ar-KOO-thah'},
+{g:'λύκος',e:'wolf',gl:'lykos',s:'LEE-kos'},{g:'αλεπού',e:'fox',gl:'alepou',s:'ah-leh-POO'},
+{g:'ελάφι',e:'deer',gl:'elafi',s:'eh-LAH-fee'},{g:'κουνέλι',e:'rabbit',gl:'kouneli',s:'koo-NEH-lee'},
+{g:'ποντίκι',e:'mouse',gl:'pontiki',s:'pon-TEE-kee'},{g:'αετός',e:'eagle',gl:'aetos',s:'ah-eh-TOHS'},
+{g:'δελφίνι',e:'dolphin',gl:'delfini',s:'thel-FEE-nee'},{g:'χελώνα',e:'turtle',gl:'chelona',s:'heh-LOH-nah'},
+{g:'κροκόδειλος',e:'crocodile',gl:'krokodeilos',s:'kroh-KOH-thee-los'},{g:'μέλισσα',e:'bee',gl:'melissa',s:'MEH-lee-sah'},
+{g:'πεταλούδα',e:'butterfly',gl:'petalouda',s:'peh-tah-LOO-thah'},{g:'αράχνη',e:'spider',gl:'arachni',s:'ah-RAHKH-nee'},
+{g:'μυρμήγκι',e:'ant',gl:'myrmingki',s:'meer-MEENG-ghee'},{g:'χταπόδι',e:'octopus',gl:'chtapodi',s:'khtah-POH-thee'},
+{g:'καρχαρίας',e:'shark',gl:'karcharias',s:'kar-hah-REE-as'},{g:'φάλαινα',e:'whale',gl:'faleena',s:'FAH-lee-nah'},
+{g:'γαϊδούρι',e:'donkey',gl:'gaidouri',s:'gah-ee-THOO-ree'},{g:'γάιδαρος',e:'mule',gl:'gaidaros',s:'GHEH-thah-ros'},
+]},
+{cat:'Colours',ws:[
+{g:'κόκκινο',e:'red',gl:'kokkino',s:'KOH-kee-noh'},{g:'μπλε',e:'blue',gl:'ble',s:'BLEH'},
+{g:'πράσινο',e:'green',gl:'prasino',s:'PRAH-see-noh'},{g:'κίτρινο',e:'yellow',gl:'kitrino',s:'KEE-tree-noh'},
+{g:'πορτοκαλί',e:'orange',gl:'portokali',s:'por-toh-kah-LEE'},{g:'μωβ',e:'purple',gl:'mov',s:'MOHV'},
+{g:'ροζ',e:'pink',gl:'roz',s:'ROHZ'},{g:'άσπρο',e:'white',gl:'aspro',s:'AHS-proh'},
+{g:'μαύρο',e:'black',gl:'mavro',s:'MAV-roh'},{g:'γκρι',e:'grey',gl:'gri',s:'GREE'},
+{g:'καφέ',e:'brown',gl:'kafe',s:'kah-FEH'},{g:'χρυσό',e:'gold',gl:'chryso',s:'hree-SOH'},
+{g:'ασημί',e:'silver',gl:'asimi',s:'ah-see-MEE'},{g:'τιρκουάζ',e:'turquoise',gl:'tirkoaz',s:'teer-KOO-az'},
+{g:'σκούρο',e:'dark',gl:'skouro',s:'SKOO-roh'},{g:'λόφος',e:'hill',gl:'lofos',s:'LOH-fos'},
+{g:'έντονο',e:'vivid / bright',gl:'entono',s:'EN-toh-noh'},{g:'χρώμα',e:'colour',gl:'chroma',s:'HROH-mah'},
+]},
+{cat:'Adjectives',ws:[
+{g:'μεγάλος',e:'big / large',gl:'megalos',s:'meh-GHAH-los'},{g:'μικρός',e:'small / little',gl:'mikros',s:'mee-KROHS'},
+{g:'ψηλός',e:'tall / high',gl:'psilos',s:'psee-LOHS'},{g:'κοντός',e:'short / low',gl:'kontos',s:'kon-TOHS'},
+{g:'φαρδύς',e:'wide',gl:'fardys',s:'far-THEES'},{g:'στενός',e:'narrow',gl:'stenos',s:'steh-NOHS'},
+{g:'βαρύς',e:'heavy',gl:'varys',s:'vah-REES'},{g:'ελαφρύς',e:'light (weight)',gl:'elafrys',s:'eh-lah-FREES'},
+{g:'ωραίος',e:'beautiful / nice',gl:'oraios',s:'oh-REH-os'},{g:'άσχημος',e:'ugly',gl:'aschimos',s:'AHS-hee-mos'},
+{g:'καλός',e:'good',gl:'kalos',s:'kah-LOHS'},{g:'κακός',e:'bad',gl:'kakos',s:'kah-KOHS'},
+{g:'νέος',e:'new / young',gl:'neos',s:'NEH-os'},{g:'παλιός',e:'old',gl:'palios',s:'pah-LYOHS'},
+{g:'γρήγορος',e:'fast',gl:'grigoros',s:'GHREE-ghoh-ros'},{g:'αργός',e:'slow',gl:'argos',s:'ar-GHOHS'},
+{g:'ζεστός',e:'hot / warm',gl:'zestos',s:'zes-TOHS'},{g:'κρύος',e:'cold',gl:'kryos',s:'KREE-os'},
+{g:'δυνατός',e:'strong / loud',gl:'dynatos',s:'thee-nah-TOHS'},{g:'αδύναμος',e:'weak',gl:'adynamos',s:'ah-THEE-nah-mos'},
+{g:'εύκολος',e:'easy',gl:'efkolos',s:'EV-koh-los'},{g:'δύσκολος',e:'difficult',gl:'dyskolos',s:'THEES-koh-los'},
+{g:'ακριβός',e:'expensive',gl:'akrivos',s:'ah-kree-VOHS'},{g:'φτηνός',e:'cheap',gl:'ftinos',s:'ftee-NOHS'},
+{g:'σωστός',e:'correct',gl:'sostos',s:'sos-TOHS'},{g:'λάθος',e:'wrong / mistake',gl:'lathos',s:'LAH-thos'},
+{g:'χαρούμενος',e:'happy',gl:'charoumenos',s:'hah-ROO-meh-nos'},{g:'λυπημένος',e:'sad',gl:'lypimenos',s:'lee-pee-MEH-nos'},
+{g:'θυμωμένος',e:'angry',gl:'thymomenos',s:'thee-moh-MEH-nos'},{g:'φοβισμένος',e:'scared',gl:'fovismenos',s:'foh-vees-MEH-nos'},
+{g:'κουρασμένος',e:'tired',gl:'kourasmenos',s:'koo-raz-MEH-nos'},{g:'άρρωστος',e:'sick / ill',gl:'arrostos',s:'AH-ros-tos'},
+{g:'υγιής',e:'healthy',gl:'ygiis',s:'ee-YEES'},{g:'πεινασμένος',e:'hungry',gl:'peinasmenos',s:'pee-nas-MEH-nos'},
+{g:'διψασμένος',e:'thirsty',gl:'diphasmenos',s:'thee-psaz-MEH-nos'},{g:'ενδιαφέρον',e:'interesting',gl:'endiaferoon',s:'en-thee-ah-FEH-ron'},
+{g:'βαρετός',e:'boring',gl:'varetos',s:'vah-reh-TOHS'},{g:'έξυπνος',e:'clever / smart',gl:'exypnos',s:'EK-seep-nos'},
+{g:'ευγενικός',e:'polite',gl:'efgenikos',s:'ef-yeh-nee-KOHS'},{g:'αγενής',e:'rude',gl:'agenis',s:'ah-yeh-NEES'},
+]},
+{cat:'Verbs',ws:[
+{g:'είμαι',e:'I am',gl:'eimai',s:'EE-meh'},{g:'έχω',e:'I have',gl:'echo',s:'EH-hoh'},
+{g:'θέλω',e:'I want',gl:'thelo',s:'THEH-loh'},{g:'μπορώ',e:'I can',gl:'boro',s:'boh-ROH'},
+{g:'πρέπει',e:'I must',gl:'prepei',s:'PREH-pee'},{g:'πηγαίνω',e:'I go',gl:'pigaino',s:'pee-YEH-noh'},
+{g:'έρχομαι',e:'I come',gl:'erchomai',s:'ER-hoh-meh'},{g:'φεύγω',e:'I leave',gl:'fevgo',s:'FEV-ghoh'},
+{g:'μένω',e:'I stay / live',gl:'meno',s:'MEH-noh'},{g:'βλέπω',e:'I see',gl:'vlepo',s:'VLEH-poh'},
+{g:'ακούω',e:'I hear',gl:'akouo',s:'ah-KOO-oh'},{g:'μιλώ',e:'I speak',gl:'milo',s:'mee-LOH'},
+{g:'λέω',e:'I say / tell',gl:'leo',s:'LEH-oh'},{g:'ρωτώ',e:'I ask',gl:'roto',s:'roh-TOH'},
+{g:'απαντώ',e:'I answer',gl:'apanto',s:'ah-pan-TOH'},{g:'τρώω',e:'I eat',gl:'troo',s:'TROH-oh'},
+{g:'πίνω',e:'I drink',gl:'pino',s:'PEE-noh'},{g:'κοιμάμαι',e:'I sleep',gl:'koimamai',s:'kee-MAH-meh'},
+{g:'ξυπνώ',e:'I wake up',gl:'xypno',s:'ksee-PNOH'},{g:'δουλεύω',e:'I work',gl:'doulevo',s:'thoo-LEH-voh'},
+{g:'παίζω',e:'I play',gl:'paizo',s:'PEH-zoh'},{g:'αγαπώ',e:'I love',gl:'agapo',s:'ah-gah-POH'},
+{g:'ξέρω',e:'I know',gl:'xero',s:'KSEH-roh'},{g:'σκέφτομαι',e:'I think',gl:'skeftomai',s:'SKEF-toh-meh'},
+{g:'μαθαίνω',e:'I learn',gl:'mathaino',s:'mah-THEH-noh'},{g:'γράφω',e:'I write',gl:'grafo',s:'GHRAH-foh'},
+{g:'διαβάζω',e:'I read',gl:'diavazo',s:'thee-ah-VAH-zoh'},{g:'αγοράζω',e:'I buy',gl:'agorazo',s:'ah-ghoh-RAH-zoh'},
+{g:'πουλώ',e:'I sell',gl:'poulo',s:'poo-LOH'},{g:'πληρώνω',e:'I pay',gl:'plirono',s:'plee-ROH-noh'},
+{g:'ανοίγω',e:'I open',gl:'anoigo',s:'ah-NEE-ghoh'},{g:'κλείνω',e:'I close',gl:'kleino',s:'KLEE-noh'},
+{g:'περπατώ',e:'I walk',gl:'perpato',s:'per-pah-TOH'},{g:'τρέχω',e:'I run',gl:'trecho',s:'TREH-hoh'},
+{g:'οδηγώ',e:'I drive',gl:'odigo',s:'oh-thee-GHOH'},{g:'κάθομαι',e:'I sit',gl:'kathomai',s:'KAH-thoh-meh'},
+{g:'στέκομαι',e:'I stand',gl:'stekomai',s:'STEH-koh-meh'},{g:'δίνω',e:'I give',gl:'dino',s:'THEE-noh'},
+{g:'παίρνω',e:'I take',gl:'perno',s:'PER-noh'},{g:'βοηθώ',e:'I help',gl:'voitho',s:'voh-ee-THOH'},
+{g:'αρχίζω',e:'I start',gl:'archizo',s:'ar-KHEE-zoh'},{g:'τελειώνω',e:'I finish',gl:'teleiono',s:'teh-lee-OH-noh'},
+{g:'πιστεύω',e:'I believe',gl:'pistevo',s:'pees-TEH-voh'},{g:'θυμάμαι',e:'I remember',gl:'thimamai',s:'thee-MAH-meh'},
+{g:'ξεχνώ',e:'I forget',gl:'xechno',s:'kseh-KHNOH'},{g:'κρέμα',e:'cream',gl:'krema',s:'KREH-mah'},
+{g:'επιλέγω',e:'I choose',gl:'epilego',s:'eh-pee-LEH-ghoh'},{g:'αλλάζω',e:'I change',gl:'allazo',s:'ah-LAH-zoh'},
+{g:'κατεβαίνω',e:'I go down',gl:'katavaino',s:'kah-tah-VEH-noh'},{g:'ανεβαίνω',e:'I go up',gl:'anavaino',s:'ah-nah-VEH-noh'},
+{g:'κλείνω ραντεβού',e:'I make an appointment',gl:'kleino rantevou',s:'KLEE-noh ran-the-VOO'},{g:'τηλεφωνώ',e:'I phone',gl:'tilefono',s:'tee-leh-foh-NOH'},
+]},
+{cat:'Health',ws:[
+{g:'υγεία',e:'health',gl:'ygeia',s:'ee-YEE-ah'},{g:'γιατρός',e:'doctor',gl:'yiatros',s:'yah-TROHS'},
+{g:'νοσοκόμα',e:'nurse',gl:'nosokoma',s:'no-so-KOH-mah'},{g:'φάρμακο',e:'medicine',gl:'farmako',s:'FAR-mah-koh'},
+{g:'χάπι',e:'pill / tablet',gl:'chapi',s:'HAH-pee'},{g:'πόνος',e:'pain',gl:'ponos',s:'POH-nos'},
+{g:'πυρετός',e:'fever',gl:'pyretos',s:'pee-reh-TOHS'},{g:'κρυολόγημα',e:'cold (illness)',gl:'kryologima',s:'kree-oh-LOH-yee-mah'},
+{g:'βήχας',e:'cough',gl:'vichas',s:'VEE-has'},{g:'πονοκέφαλος',e:'headache',gl:'ponokef alos',s:'poh-noh-KEH-fah-los'},
+{g:'αλλεργία',e:'allergy',gl:'allergia',s:'ah-ler-YEE-ah'},{g:'τραύμα',e:'wound / injury',gl:'travma',s:'TRAHV-mah'},
+{g:'επείγον',e:'emergency',gl:'epigon',s:'eh-PEE-gon'},{g:'ασθενής',e:'patient',gl:'asthenis',s:'as-theh-NEES'},
+{g:'ασθενοφόρο',e:'ambulance',gl:'asthenoforo',s:'as-theh-noh-FOH-roh'},{g:'εγχείρηση',e:'operation',gl:'encheirisi',s:'en-HEE-ree-see'},
+{g:'παπαγάλος',e:'parrot',gl:'papagalos',s:'pah-pah-GHAH-los'},{g:'πίεση',e:'blood pressure',gl:'piesi',s:'PEE-eh-see'},
+{g:'ψυχολόγος',e:'psychologist',gl:'psychologos',s:'psee-HOH-loh-ghos'},{g:'δίαιτα',e:'diet',gl:'diaita',s:'THEE-eh-tah'},
+{g:'σήραγγα',e:'tunnel',gl:'siranga',s:'see-RAN-gah'},{g:'ακτινογραφία',e:'X-ray',gl:'aktinografia',s:'ak-tee-noh-ghrah-FEE-ah'},
+]},
+{cat:'Shopping',ws:[
+{g:'τιμή',e:'price',gl:'timi',s:'tee-MEE'},{g:'έκπτωση',e:'discount',gl:'ekptosi',s:'EK-ptoh-see'},
+{g:'λογαριασμός',e:'bill / account',gl:'logarismos',s:'loh-gah-rees-MOHS'},{g:'μετρητά',e:'cash',gl:'metrita',s:'meh-tree-TAH'},
+{g:'κάρτα',e:'card (payment)',gl:'karta',s:'KAR-tah'},{g:'απόδειξη',e:'receipt',gl:'apodeixi',s:'ah-POH-theek-see'},
+{g:'μέγεθος',e:'size',gl:'megethos',s:'MEH-yeh-thos'},{g:'κατάστημα',e:'shop / store',gl:'katastima',s:'kah-TAH-stee-mah'},
+{g:'ταμείο',e:'checkout / cashier',gl:'tameio',s:'tah-MEE-oh'},{g:'σάκος',e:'bag',gl:'sakos',s:'SAH-kos'},
+{g:'ρούχο',e:'clothing',gl:'roucho',s:'ROO-hoh'},{g:'παπούτσι',e:'shoe',gl:'papoutsi',s:'pah-POOT-see'},
+{g:'φόρεμα',e:'dress',gl:'forema',s:'FOH-reh-mah'},{g:'παντελόνι',e:'trousers',gl:'panteloni',s:'pan-teh-LOH-nee'},
+{g:'πουκάμισο',e:'shirt',gl:'poukamiso',s:'poo-KAH-mee-soh'},{g:'σακάκι',e:'jacket',gl:'sakaki',s:'sah-KAH-kee'},
+{g:'καπέλο',e:'hat',gl:'kapelo',s:'kah-PEH-loh'},{g:'κόσμημα',e:'jewellery',gl:'kosmima',s:'KOZ-mee-mah'},
+{g:'δώρο',e:'gift',gl:'doro',s:'THOH-roh'},{g:'λαχείο',e:'lottery / receipt',gl:'lacheio',s:'lah-HEE-oh'},
+]},
+{cat:'Weather',ws:[
+{g:'καιρός',e:'weather',gl:'kairos',s:'keh-ROHS'},{g:'ζέστη',e:'heat',gl:'zesti',s:'ZES-tee'},
+{g:'κρύο',e:'cold (noun)',gl:'kryo',s:'KREE-oh'},{g:'λωρίδα',e:'lane',gl:'lorida',s:'loh-REE-thah'},
+{g:'θάμνος',e:'bush / shrub',gl:'thamnos',s:'THAM-nos'},{g:'λιβάδι',e:'meadow',gl:'livadi',s:'lee-VAH-thee'},
+{g:'φώκια',e:'seal (animal)',gl:'fokia',s:'FOH-kyah'},{g:'θερμοκρασία',e:'temperature',gl:'thermokrasia',s:'ther-moh-krah-SEE-ah'},
+{g:'ρινόκερος',e:'rhinoceros',gl:'rinoкeros',s:'ree-NOH-keh-ros'},{g:'λιακάδα',e:'sunshine / clear sky',gl:'liakada',s:'lyah-KAH-thah'},
+{g:'συννεφιά',e:'cloudiness',gl:'synefia',s:'see-neh-FYAH'},{g:'υγρασία',e:'humidity',gl:'ygrasia',s:'ee-ghrah-SEE-ah'},
+{g:'παγετός',e:'frost',gl:'pagetos',s:'pah-yeh-TOHS'},{g:'ξηρασία',e:'drought',gl:'xirasia',s:'ksee-rah-SEE-ah'},
+{g:'πλημμύρα',e:'flood',gl:'plimmyra',s:'plee-MEE-rah'},
+]},
+{cat:'Emotions',ws:[
+{g:'αγάπη',e:'love',gl:'agapi',s:'ah-GHAH-pee'},{g:'χαρά',e:'joy / happiness',gl:'chara',s:'hah-RAH'},
+{g:'λύπη',e:'sadness',gl:'lypi',s:'LEE-pee'},{g:'θυμός',e:'anger',gl:'thymos',s:'thee-MOHS'},
+{g:'φόβος',e:'fear',gl:'fovos',s:'FOH-vos'},{g:'έκπληξη',e:'surprise',gl:'ekpliksi',s:'EK-pleek-see'},
+{g:'ελπίδα',e:'hope',gl:'elpida',s:'el-PEE-thah'},{g:'άγχος',e:'anxiety',gl:'anchos',s:'ANG-hohs'},
+{g:'περηφάνια',e:'pride',gl:'perifania',s:'peh-ree-FAH-nyah'},{g:'ζήλεια',e:'jealousy',gl:'zilia',s:'ZEE-lee-ah'},
+{g:'ντροπή',e:'shame',gl:'dropi',s:'droh-PEE'},{g:'ευγνωμοσύνη',e:'gratitude',gl:'evgnomosini',s:'ev-gnoh-moh-SEE-nee'},
+{g:'μοναξιά',e:'loneliness',gl:'monaxia',s:'moh-nah-KSYAH'},{g:'ηρεμία',e:'calm / peace',gl:'iremia',s:'ee-reh-MEE-ah'},
+{g:'ενθουσιασμός',e:'enthusiasm',gl:'enthousiasmos',s:'en-thoo-syaz-MOHS'},{g:'απογοήτευση',e:'disappointment',gl:'apogoitefsi',s:'ah-poh-ghoh-ee-TEF-see'},
+{g:'ευτυχία',e:'happiness',gl:'eftichia',s:'ef-tee-HEE-ah'},
+]},
+{cat:'Education',ws:[
+{g:'ταβέρνα',e:'taverna',gl:'taverna',s:'tah-VER-nah'},{g:'δάσκαλος',e:'teacher (male)',gl:'daskalos',s:'THAS-kah-los'},
+{g:'δασκάλα',e:'teacher (female)',gl:'daskala',s:'thas-KAH-lah'},{g:'μαθητής',e:'student',gl:'mathitis',s:'mah-thee-TEES'},
+{g:'βιβλίο',e:'book',gl:'vivlio',s:'veev-LEE-oh'},{g:'τετράδιο',e:'notebook',gl:'tetradio',s:'teh-TRAH-thee-oh'},
+{g:'μολύβι',e:'pencil',gl:'molyvi',s:'moh-LEE-vee'},{g:'στυλό',e:'pen',gl:'stylo',s:'stee-LOH'},
+{g:'μάθημα',e:'lesson',gl:'mathima',s:'MAH-thee-mah'},{g:'εξέταση',e:'exam / test',gl:'exetasi',s:'ek-ZEH-tah-see'},
+{g:'απάντηση',e:'answer',gl:'apantisi',s:'ah-PAN-tee-see'},{g:'ερώτηση',e:'question',gl:'erotisi',s:'eh-ROH-tee-see'},
+{g:'διάλεξη',e:'lecture',gl:'dialeksi',s:'thee-AH-lek-see'},{g:'βαθμός',e:'grade / mark',gl:'bathmos',s:'VATH-mos'},
+{g:'πτυχίο',e:'degree / diploma',gl:'ptychio',s:'ptee-HEE-oh'},{g:'αλεύρι',e:'flour',gl:'alevri',s:'ah-LEV-ree'},
+{g:'γραμματική',e:'grammar',gl:'grammatiki',s:'ghrah-mah-tee-KEE'},{g:'λεξιλόγιο',e:'vocabulary',gl:'lexilogio',s:'lek-see-LOH-yee-oh'},
+{g:'πρόγραμμα',e:'programme / schedule',gl:'programa',s:'PROH-ghrah-mah'},{g:'κανόνας',e:'rule',gl:'kanonas',s:'kah-NOH-nas'},
+]},
+{cat:'Technology',ws:[
+{g:'τηλέφωνο',e:'telephone',gl:'tilefono',s:'tee-LEH-foh-noh'},{g:'κινητό',e:'mobile phone',gl:'kinito',s:'kee-nee-TOH'},
+{g:'υπολογιστής',e:'computer',gl:'ypologistis',s:'ee-poh-loh-yees-TEES'},{g:'οθόνη',e:'screen',gl:'othoni',s:'oh-THOH-nee'},
+{g:'πληκτρολόγιο',e:'keyboard',gl:'pliktrologio',s:'pleek-troh-LOH-yee-oh'},{g:'ηλιοβασίλεμα',e:'sunset',gl:'iliovasilema',s:'ee-lee-oh-vah-SEE-leh-mah'},
+{g:'διαδίκτυο',e:'internet',gl:'diadiktyo',s:'thee-ah-THEEK-tee-oh'},{g:'τηλεόραση',e:'television',gl:'tileorasi',s:'tee-leh-OH-rah-see'},
+{g:'φωτογραφία',e:'photograph',gl:'fotografia',s:'foh-toh-ghrah-FEE-ah'},{g:'μηνύμα',e:'message',gl:'minima',s:'mee-NEE-mah'},
+{g:'εφαρμογή',e:'app',gl:'efarmogi',s:'eh-far-moh-YEE'},{g:'κωδικός',e:'password / code',gl:'kodikos',s:'koh-thee-KOHS'},
+{g:'δίκτυο',e:'network',gl:'diktyo',s:'THEEK-tee-oh'},{g:'αρχείο',e:'file',gl:'archeio',s:'ar-HEE-oh'},
+{g:'εκτυπωτής',e:'printer',gl:'ektypotis',s:'ek-tee-poh-TEES'},{g:'κάμερα',e:'camera',gl:'kamera',s:'KAH-meh-rah'},
+{g:'μπαταρία',e:'battery',gl:'bataria',s:'bah-tah-REE-ah'},{g:'φορτιστής',e:'charger',gl:'fortistis',s:'for-tees-TEES'},
+]},
+{cat:'Work & Business',ws:[
+{g:'δουλειά',e:'work / job',gl:'douleia',s:'thoo-LYAH'},{g:'γραφείο',e:'office',gl:'grafeio',s:'ghrah-FEE-oh'},
+{g:'επιχείρηση',e:'business',gl:'epicheirisi',s:'eh-pee-HEE-ree-see'},{g:'εταιρεία',e:'company',gl:'etaireia',s:'eh-teh-REE-ah'},
+{g:'αφεντικό',e:'boss',gl:'afentiko',s:'ah-fen-tee-KOH'},{g:'υπάλληλος',e:'employee',gl:'ypallilos',s:'ee-PAH-lee-los'},
+{g:'μισθός',e:'salary',gl:'misthos',s:'mees-THOHS'},{g:'σύσκεψη',e:'meeting',gl:'syskepsi',s:'SEES-kep-see'},
+{g:'έργο',e:'project',gl:'ergo',s:'ER-ghoh'},{g:'άνεργος',e:'unemployed',gl:'anergos',s:'AH-ner-ghos'},
+{g:'συνέντευξη',e:'interview',gl:'synentefxi',s:'see-NEN-tef-ksee'},{g:'επάγγελμα',e:'profession',gl:'epanggelma',s:'eh-PAN-ghel-mah'},
+{g:'εισόδημα',e:'income',gl:'eisodima',s:'ee-SOH-thee-mah'},{g:'φόρος',e:'tax',gl:'foros',s:'FOH-ros'},
+{g:'σύμβαση',e:'contract',gl:'symvasi',s:'SEEM-vah-see'},{g:'αίτηση',e:'application',gl:'aitisi',s:'EH-tee-see'},
+{g:'παραίτηση',e:'resignation',gl:'paraitisi',s:'pah-reh-TEE-see'},{g:'επαγγελματίας',e:'professional',gl:'epangelmarias',s:'eh-pan-yel-mah-TEE-as'},
+{g:'πελάτης',e:'customer / client',gl:'pelatis',s:'peh-LAH-tees'},{g:'τιμολόγιο',e:'invoice',gl:'timologio',s:'tee-moh-LOH-yee-oh'},
+]},
+{cat:'Pronouns & Grammar',ws:[
+{g:'εγώ',e:'I',gl:'ego',s:'eh-GHOH'},{g:'εσύ',e:'you (singular)',gl:'esy',s:'eh-SEE'},
+{g:'αυτός',e:'he',gl:'aftos',s:'af-TOHS'},{g:'αυτή',e:'she',gl:'afti',s:'af-TEE'},
+{g:'εμείς',e:'we',gl:'emeis',s:'eh-MEES'},{g:'εσείς',e:'you (plural)',gl:'eseis',s:'eh-SEES'},
+{g:'αυτοί',e:'they',gl:'aftoi',s:'af-TEE'},{g:'αυτό',e:'it / this',gl:'afto',s:'af-TOH'},
+{g:'κάτι',e:'something',gl:'kati',s:'KAH-tee'},{g:'κάποιος',e:'someone',gl:'kapios',s:'KAH-pyos'},
+{g:'τίποτα',e:'nothing',gl:'tipota',s:'TEE-poh-tah'},{g:'κανένας',e:'nobody / none',gl:'kanenas',s:'kah-NEH-nas'},
+{g:'όλοι',e:'everyone / all',gl:'oloi',s:'OH-lee'},{g:'κάθε',e:'every / each',gl:'kathe',s:'KAH-theh'},
+{g:'εκείνος',e:'that (one)',gl:'ekeinos',s:'eh-KEE-nos'},{g:'ο οποίος',e:'who / which',gl:'o opoios',s:'oh oh-PEE-ohs'},
+]},
+{cat:'Question Words',ws:[
+{g:'πού',e:'where',gl:'pou',s:'POO'},{g:'πότε',e:'when',gl:'pote',s:'POH-teh'},
+{g:'γιατί',e:'why',gl:'giati',s:'yah-TEE'},{g:'πώς',e:'how',gl:'pos',s:'POHS'},
+{g:'τι',e:'what',gl:'ti',s:'TEE'},{g:'ποιος',e:'who',gl:'poios',s:'PYOHS'},
+{g:'πόσο',e:'how much',gl:'poso',s:'POH-soh'},{g:'πόσα',e:'how many',gl:'posa',s:'POH-sah'},
+{g:'ποιο',e:'which',gl:'poio',s:'PEE-oh'},{g:'πόσο καιρό',e:'how long (time)',gl:'poso kairo',s:'POH-soh keh-ROH'},
+]},
+{cat:'Prepositions & Common',ws:[
+{g:'εδώ',e:'here',gl:'edo',s:'eh-THOH'},{g:'εκεί',e:'there',gl:'ekei',s:'eh-KEE'},
+{g:'πάνω',e:'up / above',gl:'pano',s:'PAH-noh'},{g:'κάτω',e:'down / below',gl:'kato',s:'KAH-toh'},
+{g:'αριστερά',e:'left',gl:'aristera',s:'ah-rees-teh-RAH'},{g:'δεξιά',e:'right',gl:'dexia',s:'thek-SYAH'},
+{g:'ευθεία',e:'straight ahead',gl:'eftheia',s:'ef-THEE-ah'},{g:'κοντά',e:'near',gl:'konta',s:'kon-TAH'},
+{g:'μακριά',e:'far',gl:'makria',s:'mah-KREE-ah'},{g:'μέσα',e:'inside',gl:'mesa',s:'MEH-sah'},
+{g:'έξω',e:'outside',gl:'exo',s:'EK-soh'},{g:'μπροστά',e:'in front',gl:'brosta',s:'BROHS-tah'},
+{g:'πίσω',e:'behind',gl:'piso',s:'PEE-soh'},{g:'δίπλα',e:'next to',gl:'dipla',s:'THEEP-lah'},
+{g:'ανάμεσα',e:'between',gl:'anamesa',s:'ah-NAH-meh-sah'},{g:'μαζί',e:'together',gl:'mazi',s:'mah-ZEE'},
+{g:'μόνος',e:'alone',gl:'monos',s:'MOH-nos'},{g:'επίσης',e:'also / too',gl:'episis',s:'eh-PEE-sees'},
+{g:'ακόμα',e:'still / yet',gl:'akoma',s:'ah-KOH-mah'},{g:'ήδη',e:'already',gl:'idi',s:'EE-thee'},
+{g:'πάλι',e:'again',gl:'pali',s:'PAH-lee'},{g:'ίσως',e:'maybe',gl:'isos',s:'EE-sohs'},
+{g:'σχεδόν',e:'almost',gl:'schedon',s:'SKHEH-thon'},{g:'αμέσως',e:'immediately',gl:'amesos',s:'ah-MEH-sohs'},
+{g:'μόλις',e:'just / as soon as',gl:'molis',s:'MOH-lees'},{g:'πάντα',e:'always',gl:'panta',s:'PAN-tah'},
+{g:'ποτέ',e:'never',gl:'pote',s:'poh-TEH'},{g:'συνήθως',e:'usually',gl:'synithos',s:'see-NEE-thohs'},
+{g:'μερικές φορές',e:'sometimes',gl:'merikes fores',s:'meh-ree-KES foh-RES'},{g:'πάρα πολύ',e:'very much',gl:'para poly',s:'PAH-rah poh-LEE'},
+{g:'λίγο',e:'a little',gl:'ligo',s:'LEE-ghoh'},{g:'αρκετά',e:'enough / quite',gl:'arketa',s:'ar-keh-TAH'},
+{g:'περισσότερο',e:'more',gl:'perissotero',s:'peh-ree-SOH-teh-roh'},{g:'λιγότερο',e:'less',gl:'ligotero',s:'lee-GHOH-teh-roh'},
+{g:'μόνο',e:'only',gl:'mono',s:'MOH-noh'},{g:'ακριβώς',e:'exactly',gl:'akrivos',s:'ah-kree-VOHS'},
+{g:'σε',e:'to / at / in',gl:'se',s:'seh'},{g:'από',e:'from',gl:'apo',s:'ah-POH'},
+{g:'με',e:'with',gl:'me',s:'meh'},{g:'χωρίς',e:'without',gl:'choris',s:'hoh-REES'},
+{g:'για',e:'for / about',gl:'gia',s:'yah'},{g:'σαν',e:'like / as',gl:'san',s:'san'},
+]},
+
+{cat:'House & Home',ws:[
+{g:'πόρτα',e:'door',gl:'porta',s:'POR-tah'},{g:'παράθυρο',e:'window',gl:'parathyro',s:'pah-RAH-thee-roh'},
+{g:'τοίχος',e:'wall',gl:'toichos',s:'TEE-hos'},{g:'οροφή',e:'ceiling / roof',gl:'orofi',s:'oh-roh-FEE'},
+{g:'πάτωμα',e:'floor',gl:'patoma',s:'PAH-toh-mah'},{g:'σκάλα',e:'stairs',gl:'skala',s:'SKAH-lah'},
+{g:'ασανσέρ',e:'lift / elevator',gl:'asanser',s:'ah-san-SER'},{g:'κλειδί',e:'key',gl:'kleidi',s:'klee-THEE'},
+{g:'κλειδαριά',e:'lock',gl:'kleidaria',s:'klee-thah-RYAH'},{g:'κουδούνι',e:'doorbell',gl:'koudouni',s:'koo-THOO-nee'},
+{g:'ντουλάπα',e:'wardrobe',gl:'ntoulapa',s:'doo-LAH-pah'},{g:'τραπέζι',e:'table',gl:'trapezi',s:'trah-PEH-zee'},
+{g:'καρέκλα',e:'chair',gl:'karekla',s:'kah-REK-lah'},{g:'κρεβάτι',e:'bed',gl:'krevati',s:'kreh-VAH-tee'},
+{g:'καναπές',e:'sofa / couch',gl:'kanapes',s:'kah-nah-PES'},{g:'λάμπα',e:'lamp',gl:'lamba',s:'LAM-bah'},
+{g:'σεισμός',e:'earthquake',gl:'seismos',s:'sees-MOHS'},{g:'ψυγείο',e:'fridge',gl:'psygeio',s:'psee-YEE-oh'},
+{g:'φούρνος',e:'oven',gl:'fournos',s:'FOOR-nos'},{g:'πλυντήριο',e:'washing machine',gl:'plyntirio',s:'pleen-TEE-ree-oh'},
+{g:'κουβέρτα',e:'blanket',gl:'kouverta',s:'koo-VER-tah'},{g:'μαξιλάρι',e:'pillow',gl:'maxilari',s:'mak-see-LAH-ree'},
+{g:'πετσέτα',e:'towel',gl:'petseta',s:'pet-SEH-tah'},{g:'σαπούνι',e:'soap',gl:'sapouni',s:'sah-POO-nee'},
+{g:'οδοντόβουρτσα',e:'toothbrush',gl:'odontovoursa',s:'oh-thon-TOH-voor-tsah'},{g:'καθρέφτης',e:'mirror',gl:'kathrefis',s:'kah-THREF-tees'},
+]},
+{cat:'Arts & Culture',ws:[
+{g:'μουσική',e:'music',gl:'mousiki',s:'moo-see-KEE'},{g:'τραγούδι',e:'song',gl:'tragoudi',s:'trah-GHOO-thee'},
+{g:'χορός',e:'dance',gl:'choros',s:'hoh-ROHS'},{g:'ζωγραφική',e:'painting / art',gl:'zografiki',s:'zo-ghrah-fee-KEE'},
+{g:'γλυπτό',e:'sculpture',gl:'glypto',s:'GHLEEP-toh'},{g:'κόλπος',e:'bay / gulf',gl:'kolpos',s:'KOL-pos'},
+{g:'κινηματογράφος',e:'cinema / film',gl:'kinimatografos',s:'kee-nee-mah-TOH-ghrah-fos'},{g:'θέατρο',e:'theatre',gl:'theatro',s:'THEH-ah-troh'},
+{g:'μύθος',e:'myth / legend',gl:'mythos',s:'MEE-thos'},{g:'ποίηση',e:'poetry',gl:'poiisi',s:'po-EE-ee-see'},
+{g:'μυθιστόρημα',e:'novel',gl:'mythistorima',s:'mee-thees-TOH-ree-mah'},{g:'εφημερίδα',e:'newspaper',gl:'efimerida',s:'eh-fee-meh-REE-thah'},
+{g:'τοπίο',e:'landscape / scenery',gl:'topio',s:'TOH-pyoh'},{g:'ιστορία',e:'history / story',gl:'istoria',s:'ee-sto-REE-ah'},
+{g:'παράδοση',e:'tradition',gl:'paradosi',s:'pah-rah-THOH-see'},{g:'πολιτισμός',e:'culture / civilisation',gl:'politismos',s:'poh-lee-teez-MOHS'},
+{g:'γιορτή',e:'festival / celebration',gl:'giorti',s:'yor-TEE'},{g:'αρτηρία',e:'artery',gl:'arteria',s:'ar-teh-REE-ah'},
+{g:'ναός',e:'temple',gl:'naos',s:'nah-OHS'},{g:'άγαλμα',e:'statue',gl:'agalma',s:'AH-ghal-mah'},
+]},
+{cat:'Sports & Leisure',ws:[
+{g:'αθλητισμός',e:'sport / athletics',gl:'athlitismos',s:'ath-lee-teez-MOHS'},{g:'ποδόσφαιρο',e:'football / soccer',gl:'podosfairo',s:'poh-THOS-feh-roh'},
+{g:'κολύμβηση',e:'swimming',gl:'kolymvisi',s:'koh-LEEM-vee-see'},{g:'τρέξιμο',e:'running',gl:'treximo',s:'TREKS-ee-moh'},
+{g:'ποδηλασία',e:'cycling',gl:'podilasia',s:'poh-thee-lah-SEE-ah'},{g:'βόλτα',e:'walk / stroll',gl:'volta',s:'VOL-tah'},
+{g:'γυμναστήριο',e:'gym',gl:'gymnastirio',s:'gheem-nas-TEE-ree-oh'},{g:'παιχνίδι',e:'game',gl:'paichnidi',s:'pehkh-NEE-thee'},
+{g:'ταξίδι',e:'journey / trip',gl:'taxidi',s:'tak-SEE-thee'},{g:'διακοπές',e:'holidays / vacation',gl:'diakopes',s:'thee-ah-koh-PES'},
+{g:'ξεκούραση',e:'rest / relaxation',gl:'xekoyrasi',s:'kse-KOO-rah-see'},{g:'χόμπι',e:'hobby',gl:'hobi',s:'HOH-bee'},
+{g:'μπαλόνι',e:'balloon',gl:'baloni',s:'bah-LOH-nee'},{g:'θέαμα',e:'spectacle / show',gl:'theama',s:'THEH-ah-mah'},
+{g:'συναυλία',e:'concert',gl:'synaulia',s:'see-nav-LEE-ah'},{g:'εκδρομή',e:'excursion / outing',gl:'ekdromi',s:'ek-throh-MEE'},
+{g:'ταξιδιώτης',e:'traveller',gl:'taxidiotis',s:'tak-see-THYOH-tees'},{g:'τουρίστας',e:'tourist',gl:'touristas',s:'too-REES-tas'},
+{g:'χωράφι',e:'field',gl:'chorafi',s:'hoh-RAH-fee'},{g:'μανταρίνι',e:'tangerine',gl:'mantarini',s:'man-dah-REE-nee'},
+]},
+{cat:'Society & Politics',ws:[
+{g:'κυβέρνηση',e:'government',gl:'kyvернisi',s:'kee-VER-nee-see'},{g:'νόμος',e:'law',gl:'nomos',s:'NOH-mos'},
+{g:'δικαστήριο',e:'court (law)',gl:'dikastirio',s:'thee-kas-TEE-ree-oh'},{g:'εκλογές',e:'elections',gl:'ekloges',s:'ek-loh-YES'},
+{g:'ψήφος',e:'vote',gl:'psifos',s:'PSEE-fos'},{g:'πόλεμος',e:'war',gl:'polemos',s:'POH-leh-mos'},
+{g:'ειρήνη',e:'peace',gl:'eirini',s:'ee-REE-nee'},{g:'ελευθερία',e:'freedom / liberty',gl:'eleftheria',s:'eh-lef-theh-REE-ah'},
+{g:'δικαιώματα',e:'rights',gl:'dikaiomata',s:'thee-keh-OH-mah-tah'},{g:'κοινωνία',e:'society',gl:'koinonia',s:'kee-noh-NEE-ah'},
+{g:'οικονομία',e:'economy',gl:'oikonomia',s:'ee-koh-noh-MEE-ah'},{g:'φτώχεια',e:'poverty',gl:'ftocheia',s:'FTOH-hee-ah'},
+{g:'πλούτος',e:'wealth',gl:'ploutos',s:'PLOO-tos'},{g:'δήμαρχος',e:'mayor',gl:'dimarchos',s:'THEE-mar-hos'},
+{g:'πρωθυπουργός',e:'prime minister',gl:'prothypourgos',s:'proh-thee-poo-ghos'},{g:'πρόεδρος',e:'president',gl:'proedros',s:'PROH-eth-ros'},
+{g:'βουλή',e:'parliament',gl:'vouli',s:'voo-LEE'},{g:'δήμος',e:'municipality',gl:'dimos',s:'THEE-mos'},
+{g:'πολίτης',e:'citizen',gl:'politis',s:'poh-LEE-tees'},{g:'μεταφορά',e:'transport / translation',gl:'metafora',s:'meh-tah-foh-RAH'},
+]},
+{cat:'Abstract & Ideas',ws:[
+{g:'ιδέα',e:'idea',gl:'idea',s:'ee-THEH-ah'},{g:'γνώση',e:'knowledge',gl:'gnosi',s:'GNOH-see'},
+{g:'αλήθεια',e:'truth',gl:'alitheia',s:'ah-LEE-thee-ah'},{g:'ψέμα',e:'lie / falsehood',gl:'psema',s:'PSEH-mah'},
+{g:'ερώτημα',e:'question / issue',gl:'erotima',s:'eh-ROH-tee-mah'},{g:'πάνθηρας',e:'panther',gl:'pantiras',s:'PAN-thee-ras'},
+{g:'λύση',e:'solution',gl:'lysi',s:'LEE-see'},{g:'πρόβλημα',e:'problem',gl:'provlima',s:'PROH-vlee-mah'},
+{g:'ευκαιρία',e:'opportunity / chance',gl:'efkairia',s:'ef-keh-REE-ah'},{g:'κίνδυνος',e:'danger / risk',gl:'kindynos',s:'KEEN-thee-nos'},
+{g:'επιτυχία',e:'success',gl:'epitichia',s:'eh-pee-tee-HEE-ah'},{g:'αποτυχία',e:'failure',gl:'apotichia',s:'ah-poh-tee-HEE-ah'},
+{g:'σκοπός',e:'purpose / goal',gl:'skopos',s:'skoh-POHS'},{g:'όνειρο',e:'dream',gl:'oneiro',s:'OH-nee-roh'},
+{g:'ανάμνηση',e:'memory / recollection',gl:'anamnisi',s:'ah-NAM-nee-see'},{g:'φαντασία',e:'imagination',gl:'fantasia',s:'fan-tah-SEE-ah'},
+{g:'πίστη',e:'faith / belief',gl:'pisti',s:'PEES-tee'},{g:'δύναμη',e:'power / strength',gl:'dynami',s:'THEE-nah-mee'},
+{g:'αξία',e:'value / worth',gl:'axia',s:'ah-KSEE-ah'},{g:'σχέση',e:'relationship',gl:'schesi',s:'SKHEH-see'},
+{g:'αλλαγή',e:'change',gl:'allagi',s:'ah-lah-YEE'},{g:'ανάπτυξη',e:'development / growth',gl:'anaptyxi',s:'ah-NAP-teek-see'},
+]},
+
+{cat:'Science & Nature',ws:[
+{g:'επιστήμη',e:'science',gl:'epistimi',s:'eh-pees-TEE-mee'},{g:'φυσική',e:'physics',gl:'fysiki',s:'fee-see-KEE'},
+{g:'χημεία',e:'chemistry',gl:'chimeia',s:'hee-MEE-ah'},{g:'βιολογία',e:'biology',gl:'viologia',s:'vee-oh-loh-YEE-ah'},
+{g:'μαθηματικά',e:'mathematics',gl:'mathimatika',s:'mah-thee-mah-tee-KAH'},{g:'γεωγραφία',e:'geography',gl:'geografia',s:'yeh-oh-ghrah-FEE-ah'},
+{g:'αστρονομία',e:'astronomy',gl:'astronomia',s:'ah-stroh-noh-MEE-ah'},{g:'περιβάλλον',e:'environment',gl:'perivallon',s:'peh-ree-VAL-on'},
+{g:'κλίμα',e:'climate',gl:'klima',s:'KLEE-mah'},{g:'ενέργεια',e:'energy',gl:'energia',s:'eh-NER-yee-ah'},
+{g:'ηλεκτρισμός',e:'electricity',gl:'ilektrismos',s:'ee-lek-trees-MOHS'},{g:'βαρύτητα',e:'gravity',gl:'varytita',s:'vah-REE-tee-tah'},
+{g:'ατμόσφαιρα',e:'atmosphere',gl:'atmosfaira',s:'at-MOS-feh-rah'},{g:'οξυγόνο',e:'oxygen',gl:'oxygono',s:'ok-SEE-ghoh-noh'},
+{g:'έλος',e:'marsh / swamp',gl:'elos',s:'EH-los'},{g:'τσακάλι',e:'jackal',gl:'tsakali',s:'tsah-KAH-lee'},
+{g:'πείραμα',e:'experiment',gl:'peirama',s:'PEE-rah-mah'},{g:'θεωρία',e:'theory',gl:'theoria',s:'theh-oh-REE-ah'},
+{g:'αποτέλεσμα',e:'result',gl:'apotelasma',s:'ah-poh-TEH-les-mah'},{g:'ανακάλυψη',e:'discovery',gl:'anakalypsi',s:'ah-nah-KAH-leep-see'},
+]},
+{cat:'Character & Personality',ws:[
+{g:'χαρακτήρας',e:'character',gl:'charaktiras',s:'kah-rak-TEE-ras'},{g:'προσωπικότητα',e:'personality',gl:'prosopikotita',s:'proh-soh-pee-koh-TEE-tah'},
+{g:'γενναίος',e:'brave / courageous',gl:'gennaios',s:'yeh-NEH-os'},{g:'δειλός',e:'cowardly',gl:'deilos',s:'thee-LOHS'},
+{g:'ειλικρινής',e:'honest / sincere',gl:'eilikrinís',s:'ee-lee-kree-NEES'},{g:'ψεύτης',e:'liar',gl:'pseftis',s:'PSEF-tees'},
+{g:'γενναιόδωρος',e:'generous',gl:'gennaiotoros',s:'yeh-neh-OH-thoh-ros'},{g:'τσιγκούνης',e:'mean / stingy',gl:'tsingoúnis',s:'tseeng-GOO-nees'},
+{g:'υπομονετικός',e:'patient (adj)',gl:'ypomonetikos',s:'ee-poh-moh-neh-tee-KOHS'},{g:'ανυπόμονος',e:'impatient',gl:'anypomonos',s:'ah-nee-POH-moh-nos'},
+{g:'φιλόδοξος',e:'ambitious',gl:'filodoxos',s:'fee-LOH-thok-sos'},{g:'τεμπέλης',e:'lazy',gl:'tempelis',s:'tem-BEH-lees'},
+{g:'σοβαρός',e:'serious',gl:'sovaros',s:'soh-vah-ROHS'},{g:'αστείος',e:'funny / amusing',gl:'asteios',s:'ah-STEE-os'},
+{g:'ζηλιάρης',e:'jealous (adj)',gl:'zilíaris',s:'zee-LYAH-rees'},{g:'ανοιχτόμυαλος',e:'open-minded',gl:'anoichtomyalos',s:'ah-nee-KHTO-mya-los'},
+{g:'φιλικός',e:'friendly',gl:'filikos',s:'fee-lee-KOHS'},{g:'κοινωνικός',e:'sociable',gl:'koinonikos',s:'kee-noh-nee-KOHS'},
+{g:'ντροπαλός',e:'shy',gl:'dtrоpalos',s:'droh-pah-LOHS'},{g:'αισιόδοξος',e:'optimistic',gl:'aisiodoxos',s:'eh-see-OH-thok-sos'},
+]},
+{cat:'Finance & Money',ws:[
+{g:'χρήματα',e:'money',gl:'chrimata',s:'KHREE-mah-tah'},{g:'ευρώ',e:'euro',gl:'evro',s:'EV-roh'},
+{g:'λίρα',e:'pound',gl:'lira',s:'LEE-rah'},{g:'νόμισμα',e:'coin / currency',gl:'nomisma',s:'noh-MEEZ-mah'},
+{g:'τραπεζικός λογαριασμός',e:'bank account',gl:'trapezikos logarismos',s:'trah-peh-zee-KOHS'},{g:'δάνειο',e:'loan',gl:'daneio',s:'THAH-nee-oh'},
+{g:'επένδυση',e:'investment',gl:'ependysi',s:'eh-PEN-thee-see'},{g:'κέρδος',e:'profit',gl:'kerdos',s:'KER-thos'},
+{g:'ζημιά',e:'loss / damage',gl:'zimia',s:'zee-MYAH'},{g:'αποταμίευση',e:'savings',gl:'apotamiefsi',s:'ah-poh-tah-MEE-ef-see'},
+{g:'χρέος',e:'debt',gl:'chreos',s:'KHREH-os'},{g:'μαρμελάδα',e:'jam / marmalade',gl:'marmelada',s:'mar-meh-LAH-thah'},
+{g:'πιστωτική κάρτα',e:'credit card',gl:'pistotiki karta',s:'pees-toh-tee-KEE KAR-tah'},{g:'ΑΤΜ',e:'cash machine / ATM',gl:'ATM',s:'ah-tee-EM'},
+{g:'ανταλλαγή',e:'exchange',gl:'antalagi',s:'an-dah-lah-YEE'},{g:'τόκος',e:'interest (financial)',gl:'tokos',s:'TOH-kos'},
+]},
+
+{cat:'Communication',ws:[
+{g:'λόγος',e:'word / speech',gl:'logos',s:'LOH-ghos'},{g:'πρόταση',e:'sentence',gl:'protasi',s:'PROH-tah-see'},
+{g:'συζήτηση',e:'discussion / conversation',gl:'syzitisi',s:'see-ZEE-tee-see'},{g:'συμφωνία',e:'agreement',gl:'symfonia',s:'seem-foh-NEE-ah'},
+{g:'διαφωνία',e:'disagreement',gl:'diafonia',s:'thee-ah-foh-NEE-ah'},{g:'επικοινωνία',e:'communication',gl:'epikoinonia',s:'eh-pee-kee-noh-NEE-ah'},
+{g:'ειδήσεις',e:'news',gl:'eidiseis',s:'ee-THEE-sees'},{g:'διαφήμιση',e:'advertisement',gl:'diafimisi',s:'thee-ah-FEE-mee-see'},
+{g:'γνώμη',e:'opinion',gl:'gnomi',s:'GNOH-mee'},{g:'συμβουλή',e:'advice',gl:'symvouli',s:'seem-voo-LEE'},
+{g:'παράπονο',e:'complaint',gl:'parapono',s:'pah-RAH-poh-noh'},{g:'έγγραφο',e:'document',gl:'engrafo',s:'EN-grah-foh'},
+{g:'υπογραφή',e:'signature',gl:'ypografi',s:'ee-poh-ghrah-FEE'},{g:'επιστολή',e:'letter (correspondence)',gl:'epistoli',s:'eh-pees-toh-LEE'},
+{g:'κείμενο',e:'text',gl:'keimeno',s:'KEE-meh-noh'},{g:'άρθρο',e:'article',gl:'arthro',s:'AR-throh'},
+{g:'βιογραφία',e:'biography',gl:'viografia',s:'vee-oh-ghrah-FEE-ah'},{g:'ανακοίνωση',e:'announcement',gl:'anakoinosi',s:'ah-nah-kee-NOH-see'},
+{g:'σύμβολο',e:'symbol',gl:'symbolo',s:'SEEM-voh-loh'},{g:'ρυθμός',e:'rhythm',gl:'rythmos',s:'reeth-MOHS'},
+{g:'μετάφραση',e:'translation',gl:'metafrasi',s:'meh-TAH-frah-see'},{g:'ερμηνεία',e:'interpretation',gl:'erminia',s:'er-mee-NEE-ah'},
+{g:'διερμηνέας',e:'interpreter',gl:'diermineas',s:'thee-er-mee-NEH-as'},{g:'ξένη γλώσσα',e:'foreign language',gl:'xeni glossa',s:'KSEH-nee GHLO-sah'},
+]},
+
+{cat:'Everyday Essentials',ws:[
+{g:'πράγμα',e:'thing / object',gl:'pragma',s:'PRAHG-mah'},{g:'τρόπος',e:'way / manner',gl:'tropos',s:'TROH-pos'},
+{g:'μέρος',e:'place / part',gl:'meros',s:'MEH-ros'},{g:'είδος',e:'type / kind',gl:'eidos',s:'EE-thos'},
+{g:'αριθμός',e:'number',gl:'arithmos',s:'ah-reeth-MOHS'},{g:'βιολετί',e:'violet',gl:'violeti',s:'vee-oh-leh-TEE'},
+{g:'τέλος',e:'end',gl:'telos',s:'TEH-los'},{g:'αρχή',e:'beginning / origin',gl:'archi',s:'ar-KHEE'},
+{g:'μέσο',e:'middle / medium',gl:'meso',s:'MEH-soh'},{g:'τμήμα',e:'section / department',gl:'tmima',s:'TMEE-mah'},
+{g:'σύστημα',e:'system',gl:'systima',s:'SEES-tee-mah'},{g:'διαδικασία',e:'process',gl:'diadikasia',s:'thee-ah-thee-kah-SEE-ah'},
+{g:'ξημέρωμα',e:'dawn',gl:'ximerома',s:'ksee-MEH-roh-mah'},{g:'παράδειγμα',e:'example',gl:'paradeigma',s:'pah-RAH-thyegh-mah'},
+{g:'τρόφιμο',e:'food / provisions',gl:'trofimo',s:'TROH-fee-moh'},{g:'ποσότητα',e:'quantity',gl:'posotita',s:'poh-SOH-tee-tah'},
+{g:'ποιότητα',e:'quality',gl:'poiotita',s:'pyoh-TEE-tah'},{g:'σχήμα',e:'shape / form',gl:'schima',s:'SKHEE-mah'},
+{g:'μέτρο',e:'measure / metre',gl:'metro',s:'MEH-troh'},{g:'βάρος',e:'weight',gl:'varos',s:'VAH-ros'},
+{g:'ύψος',e:'height',gl:'ypsos',s:'EEP-sos'},{g:'πλάτος',e:'width',gl:'platos',s:'PLAH-tos'},
+{g:'μήκος',e:'length',gl:'mikos',s:'MEE-kos'},{g:'απόσταση',e:'distance',gl:'apostasi',s:'ah-POS-tah-see'},
+{g:'ταχύτητα',e:'speed',gl:'tachytita',s:'tah-KHEE-tee-tah'},{g:'ακτή',e:'coast / shore',gl:'akti',s:'ak-TEE'},
+{g:'φως',e:'light',gl:'fos',s:'FOHS'},{g:'σκιά',e:'shadow / shade',gl:'skia',s:'SKYAH'},
+{g:'ήχος',e:'sound / noise',gl:'ichos',s:'EE-hos'},{g:'θόρυβος',e:'noise / disturbance',gl:'thoryвos',s:'THOH-ree-vos'},
+{g:'πηλός',e:'clay',gl:'pilos',s:'pee-LOHS'},{g:'υλικό',e:'material',gl:'yliko',s:'ee-lee-KOH'},
+{g:'ξύλο',e:'wood',gl:'xylo',s:'KSEE-loh'},{g:'μέταλλο',e:'metal',gl:'metallo',s:'meh-TAH-loh'},
+{g:'πλαστικό',e:'plastic',gl:'plastiko',s:'plas-tee-KOH'},{g:'γυαλί',e:'glass',gl:'gyali',s:'yah-LEE'},
+{g:'χαρτί',e:'paper',gl:'charti',s:'khar-TEE'},{g:'πλαίσιο',e:'frame / context',gl:'plaision',s:'PLEH-see-oh'},
+{g:'κατηγορία',e:'category',gl:'katigorria',s:'kah-tee-ghoh-REE-ah'},{g:'λίστα',e:'list',gl:'lista',s:'LEES-tah'},
+{g:'παρελθόν',e:'past',gl:'parelthon',s:'pah-rel-THON'},{g:'παρόν',e:'present (time)',gl:'paron',s:'pah-RON'},
+{g:'μέλλον',e:'future',gl:'mellon',s:'MEL-lon'},{g:'αιώνας',e:'century',gl:'aionas',s:'eh-OH-nas'},
+{g:'δεκαετία',e:'decade',gl:'dekaetia',s:'theh-kah-eh-TEE-ah'},{g:'στιγμή',e:'moment',gl:'stigmi',s:'steeg-MEE'},
+{g:'φορά',e:'time (occasion)',gl:'fora',s:'foh-RAH'},{g:'σειρά',e:'turn / row / series',gl:'seira',s:'SEE-rah'},
+{g:'τάξη',e:'order / class',gl:'taxi',s:'TAK-see'},{g:'τύπος',e:'type / press',gl:'typos',s:'TEE-pos'},
+{g:'σύνολο',e:'total / sum',gl:'synolo',s:'SEE-noh-loh'},{g:'πανσιόν',e:'guesthouse',gl:'pansion',s:'pan-SYON'},
+{g:'σχέδιο',e:'plan / drawing',gl:'schedio',s:'SKHEH-thee-oh'},{g:'διάλειμμα',e:'break / interval',gl:'dialeimma',s:'thee-AH-lee-mah'},
+{g:'περίοδος',e:'period',gl:'periodos',s:'peh-REE-oh-thos'},{g:'τελετή',e:'ceremony',gl:'teleti',s:'teh-leh-TEE'},
+{g:'γεγονός',e:'event / fact',gl:'gegonos',s:'yeh-ghoh-NOHS'},{g:'φαινόμενο',e:'phenomenon',gl:'fainomeno',s:'feh-NOH-meh-noh'},
+{g:'κατάσταση',e:'situation / condition',gl:'katastasi',s:'kah-TAH-stah-see'},{g:'λεπτομέρεια',e:'detail',gl:'leptomereia',s:'lep-toh-MEH-ree-ah'},
+{g:'θέση',e:'position / seat',gl:'thesi',s:'THEH-see'},{g:'στόχος',e:'target / goal',gl:'stochos',s:'STOH-hos'},
+{g:'αποστολή',e:'mission / delivery',gl:'apostoli',s:'ah-pos-toh-LEE'},{g:'αντικείμενο',e:'object / item',gl:'antikeimeno',s:'an-tee-KEE-meh-noh'},
+{g:'απόφαση',e:'decision',gl:'apofasi',s:'ah-POH-fah-see'},{g:'σύνδεση',e:'connection',gl:'syndesi',s:'SEEN-theh-see'},
+{g:'αναφορά',e:'reference / report',gl:'anafora',s:'ah-nah-foh-RAH'},{g:'παρατήρηση',e:'observation',gl:'paratirissi',s:'pah-rah-tee-REE-see'},
+{g:'εξήγηση',e:'explanation',gl:'exigisi',s:'ek-SEE-yee-see'},{g:'κατανόηση',e:'understanding / comprehension',gl:'katanoisi',s:'kah-tah-NOH-ee-see'},
+]},
+
+{cat:'More Words',ws:[
+{g:'σπανάκι',e:'spinach',gl:'spanaki',s:'spah-NAH-kee'},{g:'μελιτζάνα',e:'aubergine',gl:'melitzana',s:'meh-leet-ZAH-nah'},{g:'κολοκύθι',e:'courgette / zucchini',gl:'kolokythi',s:'koh-loh-KEE-thee'},{g:'σέλινο',e:'celery',gl:'selino',s:'SEH-lee-noh'},{g:'μπρόκολο',e:'broccoli',gl:'brokolo',s:'BROH-koh-loh'},{g:'κουκουνάρι',e:'pine nut',gl:'kouounari',s:'koo-koo-NAH-ree'},{g:'ελαιόλαδο',e:'olive oil',gl:'elaiolado',s:'eh-leh-OH-lah-thoh'},{g:'τυρόπιτα',e:'cheese pie',gl:'tyropita',s:'tee-ROH-pee-tah'},{g:'σπανακόπιτα',e:'spinach pie',gl:'spanakopita',s:'spah-nah-KOH-pee-tah'},{g:'μουσακάς',e:'moussaka',gl:'mousakas',s:'moo-sah-KAHS'},{g:'σουβλάκι',e:'souvlaki',gl:'souvlaki',s:'soov-LAH-kee'},{g:'γαρίδα',e:'shrimp / prawn',gl:'garida',s:'ghah-REE-thah'},{g:'αστακός',e:'lobster',gl:'astakos',s:'ah-stah-KOHS'},{g:'μύδι',e:'mussel',gl:'mydi',s:'MEE-thee'},{g:'αναπνοή',e:'breathing / breath',gl:'anapnoi',s:'ah-nap-no-EE'},{g:'σφυγμός',e:'pulse',gl:'sfygmos',s:'sfeegh-MOHS'},{g:'πονόλαιμος',e:'sore throat',gl:'ponolaimos',s:'poh-NOH-leh-mos'},{g:'ναυτία',e:'nausea',gl:'naftia',s:'nav-TEE-ah'},{g:'ζάλη',e:'dizziness',gl:'zali',s:'ZAH-lee'},{g:'πλοήγηση',e:'navigation',gl:'ploigisi',s:'ploh-ee-YEE-see'},{g:'αναχώρηση',e:'departure',gl:'anachōrisi',s:'ah-nah-HOH-ree-see'},{g:'άφιξη',e:'arrival',gl:'afixi',s:'AH-feek-see'},{g:'καθυστέρηση',e:'delay',gl:'kathysterisi',s:'kah-thees-TEH-ree-see'},{g:'βαλίτσα',e:'suitcase',gl:'valitsa',s:'vah-LEET-sah'},{g:'διαβατήριο',e:'passport',gl:'diavatirio',s:'thee-ah-vah-TEE-ree-oh'},{g:'γήπεδο',e:'stadium / pitch',gl:'gipedo',s:'YEE-peh-thoh'},{g:'πισίνα',e:'swimming pool',gl:'pisina',s:'pee-SEE-nah'},{g:'αυλή',e:'courtyard',gl:'avli',s:'av-LEE'},{g:'μπαλκόνι',e:'balcony',gl:'balkoni',s:'bal-KOH-nee'},{g:'υπόγειο',e:'basement',gl:'ypogeio',s:'ee-POH-yee-oh'},{g:'σοφίτα',e:'attic',gl:'sofita',s:'soh-FEE-tah'},{g:'αίθουσα',e:'hall / classroom',gl:'aithousa',s:'EH-thoo-sah'},{g:'σκεπή',e:'roof',gl:'skepi',s:'SKEH-pee'},{g:'αυλόπορτα',e:'gate',gl:'avloрorta',s:'av-LOH-por-tah'},{g:'φάρος',e:'lighthouse',gl:'faros',s:'FAH-ros'},{g:'φρέσκος',e:'fresh',gl:'freskos',s:'FRES-kos'},{g:'μαγειρεμένος',e:'cooked',gl:'mageiremenos',s:'mah-yee-reh-MEH-nos'},{g:'ωμός',e:'raw / uncooked',gl:'omos',s:'oh-MOHS'},{g:'γλυκός',e:'sweet',gl:'glykos',s:'ghlee-KOHS'},{g:'πικρός',e:'bitter',gl:'pikros',s:'peek-ROHS'},{g:'αλμυρός',e:'salty',gl:'almyros',s:'al-mee-ROHS'},{g:'ξινός',e:'sour',gl:'xinos',s:'ksee-NOHS'},{g:'μαλακός',e:'soft',gl:'malakos',s:'mah-lah-KOHS'},{g:'σκληρός',e:'hard / tough',gl:'skliros',s:'sklee-ROHS'},{g:'λείος',e:'smooth',gl:'leios',s:'LEE-os'},{g:'τραχύς',e:'rough',gl:'trachys',s:'trah-KHEES'},{g:'βρώμικος',e:'dirty',gl:'vromikos',s:'vroh-mee-KOHS'},{g:'καθαρός',e:'clean',gl:'katharos',s:'kah-thah-ROHS'},{g:'άδειος',e:'empty',gl:'adeios',s:'AH-thee-os'},{g:'γεμάτος',e:'full',gl:'gematos',s:'yeh-MAH-tos'},{g:'ήσυχος',e:'quiet / peaceful',gl:'isychos',s:'EE-see-hos'},{g:'θορυβώδης',e:'noisy',gl:'thoryvōdis',s:'thoh-ree-VOH-thees'},{g:'μοναχικός',e:'lonely / solitary',gl:'monachikos',s:'moh-nah-hee-KOHS'},{g:'πολυάσχολος',e:'busy',gl:'polyascholos',s:'poh-lee-AHS-hoh-los'},{g:'άνετος',e:'comfortable',gl:'anetos',s:'AH-neh-tos'},{g:'άβολος',e:'uncomfortable',gl:'avolos',s:'AH-voh-los'},{g:'ψάχνω',e:'I search / look for',gl:'psachno',s:'PSAHKH-noh'},{g:'βρίσκω',e:'I find',gl:'vrisko',s:'VREES-koh'},{g:'χάνω',e:'I lose / miss',gl:'chano',s:'HAH-noh'},{g:'στέλνω',e:'I send',gl:'stelnо',s:'STEL-noh'},{g:'λαμβάνω',e:'I receive',gl:'lamvano',s:'lam-VAH-noh'},{g:'φτιάχνω',e:'I make / fix',gl:'ftiachno',s:'FTYAHKH-noh'},{g:'σπάω',e:'I break',gl:'spao',s:'SPAH-oh'},{g:'καθαρίζω',e:'I clean',gl:'katharizo',s:'kah-thah-REE-zoh'},{g:'μαγειρεύω',e:'I cook',gl:'mageirevo',s:'mah-yee-REV-oh'},{g:'πλένω',e:'I wash',gl:'pleno',s:'PLEH-noh'},{g:'κόβω',e:'I cut',gl:'kovo',s:'KOH-voh'},{g:'ανακατεύω',e:'I mix / stir',gl:'anakatevo',s:'ah-nah-kah-TEV-oh'},{g:'ζυγίζω',e:'I weigh',gl:'zygizo',s:'zee-YEE-zoh'},{g:'μετράω',e:'I measure / count',gl:'metrao',s:'meh-TRAH-oh'},{g:'σχεδιάζω',e:'I plan / draw',gl:'schediazo',s:'skheh-thyah-ZOH'},{g:'προτείνω',e:'I suggest / propose',gl:'proteino',s:'proh-TEE-noh'},{g:'αρνούμαι',e:'I refuse / deny',gl:'arnoume',s:'ar-NOO-meh'},{g:'συμφωνώ',e:'I agree',gl:'symfono',s:'seem-foh-NOH'},{g:'διαφωνώ',e:'I disagree',gl:'diafono',s:'thee-ah-foh-NOH'},{g:'γελώ',e:'I laugh',gl:'gelo',s:'yeh-LOH'},{g:'κλαίω',e:'I cry',gl:'klaio',s:'KLEH-oh'},{g:'φωνάζω',e:'I shout / call',gl:'fonazo',s:'foh-NAH-zoh'},{g:'ψιθυρίζω',e:'I whisper',gl:'psithyrizo',s:'psee-thee-REE-zoh'},{g:'χτυπώ',e:'I hit / knock',gl:'chtypo',s:'khtee-POH'},{g:'αγγίζω',e:'I touch',gl:'angizzo',s:'an-YEE-zoh'},{g:'μυρίζω',e:'I smell',gl:'myrizo',s:'mee-REE-zoh'},{g:'γεύομαι',e:'I taste',gl:'gevomai',s:'YEV-oh-meh'},{g:'αργά',e:'late / slowly',gl:'arga',s:'ar-GHAH'},{g:'νωρίς',e:'early',gl:'noris',s:'noh-REES'},{g:'ξαφνικά',e:'suddenly',gl:'xafnika',s:'ksaf-nee-KAH'},{g:'σιγά σιγά',e:'slowly / gradually',gl:'siga siga',s:'see-GHAH see-GHAH'},{g:'γρήγορα',e:'quickly / fast',gl:'grigora',s:'GHREE-ghoh-rah'},{g:'μαζί με',e:'together with',gl:'mazi me',s:'mah-ZEE meh'}
+,{g:'γειά',e:'cheers / health (toast)',gl:'geia',s:'YAH'},{g:'κρύσταλλο',e:'crystal',gl:'krystallo',s:'krees-TAH-loh'},{g:'σκόνη',e:'dust / powder',gl:'skoni',s:'SKOH-nee'},{g:'μαχαίρι',e:'knife',gl:'machairi',s:'mah-HEH-ree'},{g:'πιρούνι',e:'fork',gl:'pirouni',s:'pee-ROO-nee'},{g:'κουτάλι',e:'spoon',gl:'koutali',s:'koo-TAH-lee'},{g:'ποτήρι',e:'glass / cup',gl:'potiri',s:'poh-TEE-ree'}]},
+];
+const PH=[
+{cat:'Greetings',gr:'Γεια σου! Τι κάνεις;',en:'Hi! How are you?',say:'YAH-soo! tee KAH-nees',ws:['γεια σου','τι']},
+{cat:'Greetings',gr:'Καλημέρα, χαίρομαι που σε γνωρίζω.',en:'Good morning, nice to meet you.',say:'kah-lee-MEH-rah',ws:['καλημέρα']},
+{cat:'Greetings',gr:'Τα λέμε αργότερα!',en:'See you later!',say:'tah LEH-meh ar-GHOH-teh-rah',ws:['τα λέμε','μετά']},
+{cat:'Greetings',gr:'Αντίο και καλό ταξίδι!',en:'Goodbye and have a good trip!',say:'AN-tee-oh keh kah-LOH tak-SEE-thee',ws:['αντίο']},
+{cat:'Greetings',gr:'Καλώς ήρθατε στην Ελλάδα!',en:'Welcome to Greece!',say:'kah-LOHS EER-thah-teh',ws:['καλώς ήρθατε']},
+{cat:'Introductions',gr:'Με λένε Γιώργος.',en:'My name is Giorgos.',say:'meh LEH-neh YOHR-ghos',ws:['εγώ']},
+{cat:'Introductions',gr:'Από πού είσαι;',en:'Where are you from?',say:'ah-POH POO EE-seh',ws:['πού','εσύ']},
+{cat:'Introductions',gr:'Είμαι από την Αγγλία.',en:'I am from England.',say:'EE-meh ah-POH teen ang-GLEE-ah',ws:['είμαι']},
+{cat:'Introductions',gr:'Πόσο χρονών είσαι;',en:'How old are you?',say:'POH-soh hroh-NON EE-seh',ws:['πόσο','εσύ','χρόνος']},
+{cat:'Introductions',gr:'Είμαι δάσκαλος.',en:'I am a teacher.',say:'EE-meh THAS-kah-los',ws:['είμαι','δάσκαλος']},
+{cat:'Directions',gr:'Πού είναι η τουαλέτα;',en:'Where is the toilet?',say:'POO EE-neh ee too-ah-LEH-tah',ws:['πού']},
+{cat:'Directions',gr:'Πώς πάω στο κέντρο;',en:'How do I get to the centre?',say:'POHS PAH-oh stoh KEN-troh',ws:['πώς','πηγαίνω','κέντρο']},
+{cat:'Directions',gr:'Στρίψτε αριστερά στον επόμενο δρόμο.',en:'Turn left at the next street.',say:'STREEPS-teh ah-rees-teh-RAH',ws:['αριστερά','δρόμος']},
+{cat:'Directions',gr:'Είναι δεξιά στη γωνία.',en:'It\'s on the right at the corner.',say:'EE-neh thek-SYAH stee ghoh-NEE-ah',ws:['δεξιά']},
+{cat:'Directions',gr:'Πηγαίνετε ευθεία.',en:'Go straight ahead.',say:'pee-YEH-neh-teh ef-THEE-ah',ws:['πηγαίνω','ευθεία']},
+{cat:'Directions',gr:'Πόσο μακριά είναι;',en:'How far is it?',say:'POH-soh mah-KREE-ah EE-neh',ws:['πόσο','μακριά']},
+{cat:'Food & Drink',gr:'Έναν καφέ παρακαλώ.',en:'A coffee please.',say:'EH-nan kah-FEH pah-rah-kah-LOH',ws:['καφές','παρακαλώ','ένα']},
+{cat:'Food & Drink',gr:'Τι έχετε να φάμε;',en:'What do you have to eat?',say:'tee EH-heh-teh nah FAH-meh',ws:['τι','έχω','τρώω']},
+{cat:'Food & Drink',gr:'Θα ήθελα τον λογαριασμό.',en:'I would like the bill.',say:'thah EE-theh-lah ton loh-gah-rees-MOH',ws:['θέλω','λογαριασμός']},
+{cat:'Food & Drink',gr:'Είμαι χορτοφάγος.',en:'I am vegetarian.',say:'EE-meh hor-toh-FAH-ghos',ws:['είμαι']},
+{cat:'Food & Drink',gr:'Αυτό ήταν νόστιμο!',en:'That was delicious!',say:'af-TOH EE-tan NOS-tee-moh',ws:['αυτό']},
+{cat:'Food & Drink',gr:'Μπορώ να δω τον κατάλογο;',en:'Can I see the menu?',say:'boh-ROH nah THOH ton kah-TAH-loh-ghoh',ws:['μπορώ','βλέπω']},
+{cat:'Shopping',gr:'Πόσο κάνει αυτό;',en:'How much does this cost?',say:'POH-soh KAH-nee af-TOH',ws:['πόσο','αυτό']},
+{cat:'Shopping',gr:'Έχετε μεγαλύτερο μέγεθος;',en:'Do you have a bigger size?',say:'EH-heh-teh meh-ghah-LEE-teh-roh MEH-yeh-thos',ws:['έχω','μέγεθος','μεγάλος']},
+{cat:'Shopping',gr:'Πού μπορώ να πληρώσω;',en:'Where can I pay?',say:'POO boh-ROH nah plee-ROH-soh',ws:['πού','πληρώνω','μπορώ']},
+{cat:'Shopping',gr:'Δέχεστε κάρτα;',en:'Do you accept card?',say:'THEH-hes-teh KAR-tah',ws:['κάρτα']},
+{cat:'Shopping',gr:'Θέλω αυτό σε κόκκινο.',en:'I want this in red.',say:'THEH-loh af-TOH seh KOH-kee-noh',ws:['θέλω','αυτό','κόκκινο']},
+{cat:'Shopping',gr:'Μπορώ να το δοκιμάσω;',en:'Can I try it on?',say:'boh-ROH nah toh thoh-kee-MAH-soh',ws:['μπορώ']},
+{cat:'Health',gr:'Χρειάζομαι γιατρό.',en:'I need a doctor.',say:'hree-AH-zoh-meh yah-TROH',ws:['γιατρός']},
+{cat:'Health',gr:'Πονάει εδώ.',en:'It hurts here.',say:'poh-NAH-ee eh-THOH',ws:['πόνος','εδώ']},
+{cat:'Health',gr:'Έχω αλλεργία.',en:'I have an allergy.',say:'EH-hoh ah-ler-YEE-ah',ws:['έχω','αλλεργία']},
+{cat:'Health',gr:'Χρειάζομαι φάρμακο.',en:'I need medicine.',say:'hree-AH-zoh-meh FAR-mah-koh',ws:['φάρμακο']},
+{cat:'Health',gr:'Πού είναι το νοσοκομείο;',en:'Where is the hospital?',say:'POO EE-neh toh no-so-koh-MEE-oh',ws:['πού','νοσοκομείο']},
+{cat:'Health',gr:'Έχω πυρετό.',en:'I have a fever.',say:'EH-hoh pee-reh-TOH',ws:['έχω','πυρετός']},
+{cat:'Transport',gr:'Πότε φεύγει το τρένο;',en:'When does the train leave?',say:'POH-teh FEV-ghee toh TREH-noh',ws:['πότε','φεύγω','τρένο']},
+{cat:'Transport',gr:'Θέλω ένα εισιτήριο για Αθήνα.',en:'I want a ticket to Athens.',say:'THEH-loh EH-nah ee-see-TEE-ree-oh',ws:['θέλω','ένα','εισιτήριο']},
+{cat:'Transport',gr:'Πηγαίνει αυτό το λεωφορείο στο κέντρο;',en:'Does this bus go to the centre?',say:'pee-YEH-nee af-TOH toh leh-oh-foh-REE-oh',ws:['πηγαίνω','αυτό','λεωφορείο']},
+{cat:'Transport',gr:'Πού μπορώ να βρω ταξί;',en:'Where can I find a taxi?',say:'POO boh-ROH nah vroh tak-SEE',ws:['πού','μπορώ','ταξί']},
+{cat:'Hotel',gr:'Έχω κράτηση.',en:'I have a reservation.',say:'EH-hoh KRAH-tee-see',ws:['έχω']},
+{cat:'Hotel',gr:'Πότε είναι το check-out;',en:'When is check-out?',say:'POH-teh EE-neh toh check-out',ws:['πότε']},
+{cat:'Hotel',gr:'Μπορώ να έχω ένα δωμάτιο με θέα;',en:'Can I have a room with a view?',say:'boh-ROH nah EH-hoh EH-nah thoh-MAH-tee-oh',ws:['μπορώ','έχω','ένα','δωμάτιο']},
+{cat:'Hotel',gr:'Έχετε wifi;',en:'Do you have wifi?',say:'EH-heh-teh wee-fee',ws:['έχω']},
+{cat:'Emergencies',gr:'Βοήθεια! Καλέστε την αστυνομία!',en:'Help! Call the police!',say:'voh-EE-thee-ah! kah-LES-teh',ws:['βοήθεια','αστυνομία']},
+{cat:'Emergencies',gr:'Χρειάζομαι ασθενοφόρο.',en:'I need an ambulance.',say:'hree-AH-zoh-meh as-theh-noh-FOH-roh',ws:['ασθενοφόρο']},
+{cat:'Emergencies',gr:'Έχασα το διαβατήριό μου.',en:'I have lost my passport.',say:'EH-hah-sah toh thee-ah-vah-TEE-ree-oh moo',ws:['έχω']},
+{cat:'Emergencies',gr:'Υπάρχει φωτιά!',en:'There is a fire!',say:'ee-PAR-hee foh-TYAH',ws:['φωτιά']},
+{cat:'Social',gr:'Χρόνια πολλά!',en:'Many happy returns!',say:'HROH-nyah poh-LAH',ws:['χρόνος']},
+{cat:'Social',gr:'Καλά Χριστούγεννα!',en:'Merry Christmas!',say:'kah-LAH krees-TOO-yeh-nah',ws:['καλός']},
+{cat:'Social',gr:'Στην υγειά μας!',en:'Cheers!',say:'steen ee-YEE-ah mahs',ws:['υγεία']},
+{cat:'Social',gr:'Συγχαρητήρια!',en:'Congratulations!',say:'seeg-hah-ree-TEE-ree-ah',ws:[]},
+{cat:'Social',gr:'Πολύ χαρούμενος που σε βλέπω!',en:'Very happy to see you!',say:'poh-LEE hah-ROO-meh-nos',ws:['χαρούμενος','βλέπω']},
+{cat:'Opinions',gr:'Μου αρέσει πολύ η Ελλάδα.',en:'I really like Greece.',say:'moo ah-REH-see poh-LEE',ws:['εγώ']},
+{cat:'Opinions',gr:'Κατά τη γνώμη μου, είναι σωστό.',en:'In my opinion, it is correct.',say:'KAH-tah tee GNOH-mee moo',ws:['εγώ','σωστός']},
+{cat:'Weather',gr:'Τι ωραίος καιρός σήμερα!',en:'What lovely weather today!',say:'tee oh-REH-os keh-ROHS SEE-meh-rah',ws:['τι','καιρός','σήμερα']},
+{cat:'Weather',gr:'Νομίζω ότι θα βρέξει.',en:'I think it\'s going to rain.',say:'noh-MEE-zoh OH-tee thah VREH-ksee',ws:['βροχή']},
+{cat:'Weather',gr:'Κάνει πολύ ζέστη σήμερα.',en:'It is very hot today.',say:'KAH-nee poh-LEE ZES-tee SEE-meh-rah',ws:['ζέστη','σήμερα']},
 ];
 
-// ── STATE ──────────────────────────────────────────────────────────────────
+let LW=new Set(JSON.parse(localStorage.getItem('gk_lw')||'[]'));
+let LP=new Set(JSON.parse(localStorage.getItem('gk_lp')||'[]'));
+let curLetter=0, wCat='All', pCat='All';
 
-function loadKnown() {
-  try { return new Set(JSON.parse(localStorage.getItem('greek-known') || '[]')); }
-  catch { return new Set(); }
+function save(){
+  localStorage.setItem('gk_lw',JSON.stringify([...LW]));
+  localStorage.setItem('gk_lp',JSON.stringify([...LP]));
+  stats();
 }
-function saveKnown() {
-  localStorage.setItem('greek-known', JSON.stringify([...known]));
+function stats(){
+  const tot=WC.reduce((a,c)=>a+c.ws.length,0);
+  const n=LW.size, pct=tot?Math.round(n/tot*100):0;
+  document.getElementById('s-lbl').textContent=n+' / '+tot;
+  document.getElementById('s-pct').textContent=pct+'%';
+  document.getElementById('s-bar').style.width=pct+'%';
 }
-let known = loadKnown();
-
-// ── PROGRESS ───────────────────────────────────────────────────────────────
-
-function updateProgress() {
-  const n = known.size, total = LETTERS.length;
-  document.getElementById('progress-text').textContent = `${n} / ${total} known`;
-  document.getElementById('progress-fill').style.width = `${(n/total)*100}%`;
-}
-
-// ── TABS ───────────────────────────────────────────────────────────────────
-
-let currentTab = 'alphabet';
-function showTab(tab) {
-  ['alphabet','flashcards','quiz'].forEach(t => {
-    document.getElementById(t + '-view').style.display = t === tab ? '' : 'none';
-  });
-  document.querySelectorAll('nav button').forEach((b,i) => {
-    b.classList.toggle('active', ['alphabet','flashcards','quiz'][i] === tab);
-  });
-  currentTab = tab;
-  if (tab === 'flashcards') renderFlashcard();
-  if (tab === 'quiz') { resetQuizScore(); nextQuestion(); }
+function goTo(name){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('sec-'+name).classList.add('active');
+  ({alphabet:0,words:1,phrases:2})[name];
+  document.querySelectorAll('.nav-tab')[({alphabet:0,words:1,phrases:2})[name]].classList.add('active');
+  if(name==='words')renderW();
+  if(name==='phrases')renderP();
 }
 
-// ── ALPHABET GRID ──────────────────────────────────────────────────────────
-
-function renderGrid() {
-  const grid = document.getElementById('alphabet-grid');
-  grid.innerHTML = '';
-  LETTERS.forEach((l, i) => {
-    const card = document.createElement('div');
-    card.className = 'letter-card' + (known.has(i) ? ' known' : '');
-    card.innerHTML = `
-      <span class="check">✓</span>
-      <div class="letter-glyph">${l.upper}</div>
-      <div class="letter-roman">${l.roman}</div>
-      <div class="letter-name">${l.name}</div>
-      <div class="letter-case">${l.upper} / ${l.lower}</div>
-    `;
-    card.addEventListener('click', () => toggleKnown(i, card));
-    grid.appendChild(card);
-  });
+/* ALPHABET */
+function aTab(v){
+  document.getElementById('al-learn').style.display=v==='learn'?'block':'none';
+  document.getElementById('al-chart').style.display=v==='chart'?'block':'none';
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',(i===0)===(v==='learn')));
+}
+function renderLetter(i){
+  const l=AL[i];
+  const card=document.getElementById('al-card');
+  card.setAttribute('data-n',String(i+1).padStart(2,'0')+' / 24');
+  card.innerHTML=`<div class="greek-display"><span class="greek-main">${l.lo}</span><span class="greek-upper">${l.up}</span></div>
+    <div class="info-grid">
+      <div class="info-cell"><div class="info-lbl">Lowercase</div><div class="info-val">${l.lo}</div></div>
+      <div class="info-cell"><div class="info-lbl">Uppercase</div><div class="info-val">${l.up}</div></div>
+      <div class="info-cell"><div class="info-lbl">Greeklish</div><div class="info-val gl">${l.gl}</div></div>
+      <div class="info-cell"><div class="info-lbl">Name</div><div class="info-val en">${l.name}</div></div>
+      <div class="info-cell"><div class="info-lbl">Say it</div><div class="info-val pr">${l.say}</div></div>
+    </div>`;
+  document.getElementById('al-sound').innerHTML=`<span>🔉</span><div class="sound-text"><strong>${l.name}:</strong> ${l.snd}</div><div class="phonetic-badge">${l.ph}</div>`;
+  const ws=document.getElementById('al-words');
+  const dots=l.ws.map((_,j)=>`<div class="wds-dot${j===0?' active':''}" data-j="${j}"></div>`).join('');
+  const cards=l.ws.map((w,j)=>`<div class="wc${j===0?' aw':''}"><div class="wc-top"><div class="wc-gk">${w.g}</div><div class="wc-em">${w.e}</div></div><div class="wc-mn">${w.m}</div><div class="wc-tr">[ ${w.t} ]</div><div class="wc-sy"><span class="wc-sy-lbl">say it:</span><span class="wc-sy-val">${w.s}</span></div></div>`).join('');
+  ws.innerHTML=`<div class="wds-header"><span class="wds-lbl">Example words</span><div class="wds-dots" id="wdots">${dots}</div><button class="sc-btn" id="sc-l" onclick="scW(-1)" disabled>&#8592;</button><button class="sc-btn" id="sc-r" onclick="scW(1)">&#8594;</button></div><div style="overflow:hidden"><div class="wds-track" id="wtrack">${cards}</div></div>`;
+  const tr=document.getElementById('wtrack');
+  function ua(){document.getElementById('sc-l').disabled=tr.scrollLeft<=4;document.getElementById('sc-r').disabled=tr.scrollLeft>=tr.scrollWidth-tr.clientWidth-4;}
+  tr.addEventListener('scroll',()=>{const cw=tr.querySelector('.wc').offsetWidth+9,ai=Math.round(tr.scrollLeft/cw);document.querySelectorAll('.wds-dot').forEach((d,k)=>d.classList.toggle('active',k===ai));document.querySelectorAll('#wtrack .wc').forEach((c,k)=>c.classList.toggle('aw',k===ai));ua();},{passive:true});
+  document.getElementById('wdots').addEventListener('click',e=>{const d=e.target.closest('.wds-dot');if(d)tr.scrollTo({left:parseInt(d.dataset.j)*(tr.querySelector('.wc').offsetWidth+9),behavior:'smooth'});});
+  document.getElementById('al-prog').style.width=((i+1)/24*100)+'%';
+  document.getElementById('al-ctr').textContent=(i+1)+' of 24';
+  document.getElementById('al-prev').disabled=i===0;
+  document.getElementById('al-next').disabled=i===23;
+  document.querySelectorAll('.dot').forEach((d,k)=>d.classList.toggle('active',k===i));
+  card.style.animation='none';void card.offsetWidth;card.style.animation='';
+}
+function scW(dir){const t=document.getElementById('wtrack');if(!t)return;t.scrollBy({left:dir*(t.querySelector('.wc').offsetWidth+9),behavior:'smooth'});}
+function alNav(dir){curLetter=Math.max(0,Math.min(23,curLetter+dir));renderLetter(curLetter);}
+function buildDots(){
+  const n=document.getElementById('al-dots');
+  AL.forEach((l,i)=>{const d=document.createElement('button');d.className='dot';d.title=l.name;d.textContent=l.up;d.onclick=()=>{curLetter=i;renderLetter(i);};n.appendChild(d);});
+}
+function buildChart(){
+  const g=document.getElementById('al-cg');
+  AL.forEach((l,i)=>{const c=document.createElement('div');c.className='chart-cell';c.innerHTML=`<span class="cc-n">${String(i+1).padStart(2,'0')}</span><div class="cc-ltrs"><span class="cc-lo">${l.lo}</span><span class="cc-up">${l.up}</span></div><div class="cc-em">${l.ws[0].e}</div><div class="cc-gl">${l.gl}</div><div class="cc-en">${l.name}</div><div class="cc-pr">${l.say}</div>`;c.onclick=()=>{curLetter=i;renderLetter(i);aTab('learn');};g.appendChild(c);});
 }
 
-function toggleKnown(i, card) {
-  if (known.has(i)) { known.delete(i); card.classList.remove('known'); }
-  else              { known.add(i);    card.classList.add('known'); }
-  saveKnown();
-  updateProgress();
-  if (currentTab === 'flashcards') updateFcKnownBtn();
+/* WORD MODAL */
+function openM(w){
+  if(typeof w==='string')w=JSON.parse(w);
+  const isL=LW.has(w.g);
+  document.getElementById('m').innerHTML=`<button class="modal-close" onclick="document.getElementById('mo').classList.remove('open')">✕</button>
+    <div style="margin-bottom:4px"><span class="modal-gk">${w.g}</span><span class="modal-up">${w.g.toUpperCase()}</span></div>
+    <div class="modal-en">${w.e}</div>
+    <div class="modal-cells">
+      <div class="mc"><div class="mc-lbl">Greeklish</div><div class="mc-val gl">${w.gl}</div></div>
+      <div class="mc"><div class="mc-lbl">Say it</div><div class="mc-val say">${w.s}</div></div>
+      <div class="mc"><div class="mc-lbl">Status</div><div class="mc-val" id="m-status" style="color:${isL?'var(--L-text)':'var(--muted)'}">${isL?'✓ Learned':'Not yet'}</div></div>
+    </div>
+    <button class="m-btn ${isL?'unmark':'mark'}" id="m-btn" onclick="toggleW(${JSON.stringify(w).replace(/"/g,'&quot;')})">${isL?'✓ Learned — tap to unmark':'Mark as learned ✓'}</button>`;
+  document.getElementById('mo').classList.add('open');
 }
-
-function resetProgress() {
-  if (!confirm('Reset all progress?')) return;
-  known.clear(); saveKnown();
-  renderGrid(); updateProgress();
-  if (currentTab === 'flashcards') { renderFlashcard(); updateFcKnownBtn(); }
+function toggleW(w){
+  if(typeof w==='string')w=JSON.parse(w);
+  const now=!LW.has(w.g);
+  now?LW.add(w.g):LW.delete(w.g);
+  save();
+  const btn=document.getElementById('m-btn'),st=document.getElementById('m-status');
+  if(!btn)return;
+  btn.className='m-btn '+(now?'unmark':'mark');
+  btn.textContent=now?'✓ Learned — tap to unmark':'Mark as learned ✓';
+  st.style.color=now?'var(--L-text)':'var(--muted)';
+  st.textContent=now?'✓ Learned':'Not yet';
+  if(document.getElementById('sec-words').classList.contains('active'))renderW();
+  if(document.getElementById('sec-phrases').classList.contains('active'))renderP();
 }
+function closeMo(e){if(e.target===document.getElementById('mo'))document.getElementById('mo').classList.remove('open');}
 
-// ── FLASHCARDS ─────────────────────────────────────────────────────────────
-
-let fcFilter = 'all';
-let fcIndex  = 0;
-let fcDeck   = [];
-
-function setFcFilter(f) {
-  fcFilter = f;
-  document.getElementById('pill-all').classList.toggle('active', f === 'all');
-  document.getElementById('pill-unknown').classList.toggle('active', f === 'unknown');
-  fcIndex = 0;
-  buildFcDeck();
-  renderFlashcard();
-}
-
-function buildFcDeck() {
-  if (fcFilter === 'unknown') {
-    fcDeck = LETTERS.map((l,i) => i).filter(i => !known.has(i));
-  } else {
-    fcDeck = LETTERS.map((_,i) => i);
-  }
-  if (fcDeck.length === 0) fcDeck = LETTERS.map((_,i) => i);
-}
-
-function renderFlashcard() {
-  buildFcDeck();
-  if (fcIndex >= fcDeck.length) fcIndex = 0;
-  const card = document.getElementById('flashcard');
-  card.classList.remove('flipped');
-  const l = LETTERS[fcDeck[fcIndex]];
-  document.getElementById('fc-front-glyph').textContent = l.upper;
-  document.getElementById('fc-front-cases').textContent = `${l.upper} / ${l.lower}`;
-  document.getElementById('fc-back-roman').textContent = l.roman;
-  document.getElementById('fc-back-name').textContent  = l.name;
-  document.getElementById('fc-back-sound').textContent = l.sound;
-  document.getElementById('fc-counter').textContent = `${fcIndex+1} / ${fcDeck.length}`;
-  updateFcKnownBtn();
-}
-
-function flipCard() {
-  document.getElementById('flashcard').classList.toggle('flipped');
-}
-
-function fcNext() { fcIndex = (fcIndex + 1) % fcDeck.length; renderFlashcard(); }
-function fcPrev() { fcIndex = (fcIndex - 1 + fcDeck.length) % fcDeck.length; renderFlashcard(); }
-
-function updateFcKnownBtn() {
-  if (!fcDeck.length) return;
-  const i = fcDeck[fcIndex];
-  const btn = document.getElementById('fc-known-btn');
-  if (known.has(i)) {
-    btn.textContent = 'Unmark known ✕';
-    btn.style.borderColor = '';
-    btn.style.color = '';
-  } else {
-    btn.textContent = 'Mark as known ✓';
-    btn.style.borderColor = 'var(--green)';
-    btn.style.color = 'var(--green)';
-  }
-}
-
-function fcToggleKnown() {
-  if (!fcDeck.length) return;
-  const i = fcDeck[fcIndex];
-  if (known.has(i)) known.delete(i); else known.add(i);
-  saveKnown(); updateProgress(); updateFcKnownBtn();
-  const gridCards = document.querySelectorAll('.letter-card');
-  gridCards[i]?.classList.toggle('known', known.has(i));
-  if (fcFilter === 'unknown') { buildFcDeck(); renderFlashcard(); }
-}
-
-// ── QUIZ ───────────────────────────────────────────────────────────────────
-
-let quizType = 'glyph-name';
-let qCorrect = 0, qWrong = 0;
-let qAnswered = false;
-
-function setQuizType(t) {
-  quizType = t;
-  ['glyph-name','name-glyph','glyph-roman'].forEach(k => {
-    document.getElementById('qpill-' + k).classList.toggle('active', k === t);
-  });
-  nextQuestion();
-}
-
-function resetQuizScore() { qCorrect = 0; qWrong = 0; updateQuizScore(); }
-function updateQuizScore() {
-  document.getElementById('q-correct').textContent = `✓ ${qCorrect}`;
-  document.getElementById('q-wrong').textContent   = `✗ ${qWrong}`;
-}
-
-function shuffle(arr) {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.random() * (i+1) | 0;
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
-
-function nextQuestion() {
-  qAnswered = false;
-  document.getElementById('q-next').disabled = true;
-  document.getElementById('q-feedback').textContent = '';
-  document.getElementById('q-feedback').className = 'quiz-feedback';
-
-  const correctIdx = Math.random() * LETTERS.length | 0;
-  const correct = LETTERS[correctIdx];
-
-  let wrongPool = LETTERS.filter((_,i) => i !== correctIdx);
-  const distractors = shuffle(wrongPool).slice(0, 3);
-  const options = shuffle([correct, ...distractors]);
-
-  const stimulus = document.getElementById('q-stimulus');
-  const prompt   = document.getElementById('q-prompt');
-
-  if (quizType === 'glyph-name') {
-    stimulus.textContent = correct.upper;
-    stimulus.className = 'quiz-stimulus';
-    prompt.textContent = 'What is the name of this letter?';
-    renderOptions(options, o => o.name, correct.name);
-  } else if (quizType === 'name-glyph') {
-    stimulus.textContent = correct.name;
-    stimulus.className = 'quiz-stimulus text-mode';
-    prompt.textContent = 'Which is the correct glyph?';
-    renderOptions(options, o => o.upper, correct.upper);
-  } else {
-    stimulus.textContent = correct.upper;
-    stimulus.className = 'quiz-stimulus';
-    prompt.textContent = 'What is the romanisation of this letter?';
-    renderOptions(options, o => o.roman, correct.roman);
-  }
-}
-
-function renderOptions(options, labelFn, correctLabel) {
-  const container = document.getElementById('q-options');
-  container.innerHTML = '';
-  options.forEach(opt => {
-    const btn = document.createElement('button');
-    btn.className = 'quiz-opt';
-    btn.textContent = labelFn(opt);
-    btn.addEventListener('click', () => answerQuestion(btn, labelFn(opt) === correctLabel, correctLabel, container));
-    container.appendChild(btn);
+/* 1000 WORDS */
+function buildWCats(){
+  const el=document.getElementById('w-cats');
+  ['All',...WC.map(c=>c.cat)].forEach(cat=>{
+    const b=document.createElement('button');b.className='cat-btn'+(cat==='All'?' active':'');b.textContent=cat;
+    b.onclick=()=>{wCat=cat;document.querySelectorAll('#w-cats .cat-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');renderW();};
+    el.appendChild(b);
   });
 }
-
-function answerQuestion(btn, isCorrect, correctLabel, container) {
-  if (qAnswered) return;
-  qAnswered = true;
-
-  if (isCorrect) {
-    btn.classList.add('correct');
-    qCorrect++;
-    document.getElementById('q-feedback').textContent = 'Correct!';
-    document.getElementById('q-feedback').className = 'quiz-feedback correct';
-  } else {
-    btn.classList.add('wrong');
-    qWrong++;
-    document.getElementById('q-feedback').textContent = `Not quite — the answer is "${correctLabel}"`;
-    document.getElementById('q-feedback').className = 'quiz-feedback wrong';
-    // highlight correct
-    container.querySelectorAll('.quiz-opt').forEach(b => {
-      if (b.textContent === correctLabel) b.classList.add('correct');
+function renderW(){
+  const g=document.getElementById('w-grid');g.innerHTML='';let n=0;
+  WC.forEach(cat=>{
+    if(wCat!=='All'&&cat.cat!==wCat)return;
+    cat.ws.forEach(w=>{
+      const isL=LW.has(w.g);
+      const t=document.createElement('div');t.className='word-tile'+(isL?' learned':'');
+      t.innerHTML=`<div class="wt-gk">${w.g}</div><div class="wt-en">${w.e}</div><div class="wt-say">${w.s}</div>${isL?'<div class="wt-chk">✓</div>':''}`;
+      t.onclick=()=>openM(w);g.appendChild(t);n++;
     });
-  }
-
-  container.querySelectorAll('.quiz-opt').forEach(b => b.disabled = true);
-  updateQuizScore();
-  document.getElementById('q-next').disabled = false;
+  });
+  document.getElementById('w-empty').style.display=n===0?'block':'none';
 }
 
-// ── INIT ───────────────────────────────────────────────────────────────────
+/* PHRASES */
+function buildPCats(){
+  const el=document.getElementById('p-cats');
+  const cats=['All',...new Set(PH.map(p=>p.cat))];
+  cats.forEach(cat=>{
+    const b=document.createElement('button');b.className='cat-btn'+(cat==='All'?' active':'');b.textContent=cat;
+    b.onclick=()=>{pCat=cat;document.querySelectorAll('#p-cats .cat-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');renderP();};
+    el.appendChild(b);
+  });
+}
+function findW(gr){for(const c of WC){const f=c.ws.find(w=>w.g===gr);if(f)return f;}return null;}
+function toggleP(idx){
+  const k=String(idx);LP.has(k)?LP.delete(k):LP.add(k);
+  save();renderP();
+}
+function renderP(){
+  const list=document.getElementById('p-list');list.innerHTML='';
+  const arr=pCat==='All'?PH:PH.filter(p=>p.cat===pCat);
+  arr.forEach(ph=>{
+    const idx=PH.indexOf(ph),isL=LP.has(String(idx));
+    const chips=ph.ws.map(w=>{
+      const obj=findW(w);
+      if(!obj)return`<span class="chip cu">${w}</span>`;
+      const wL=LW.has(w);
+      const safe=JSON.stringify(obj).replace(/"/g,'&quot;').replace(/'/g,"\'");
+      return`<span class="chip ${wL?'cl':'cn'}" onclick="event.stopPropagation();openM('${safe}')">${w}</span>`;
+    }).join('');
+    const card=document.createElement('div');
+    card.className='pc'+(isL?' pl':'');
+    card.innerHTML=`<div class="pc-top"><div class="pc-gk">${ph.gr}</div><button class="pc-mbtn" onclick="toggleP(${idx})">${isL?'✓ Learned':'Mark learned'}</button></div><div class="pc-en">${ph.en}</div><div class="pc-say">[ ${ph.say} ]</div><div class="pc-chips">${chips}</div>`;
+    list.appendChild(card);
+  });
+}
 
-renderGrid();
-updateProgress();
-buildFcDeck();
+/* INIT */
+buildDots();buildChart();renderLetter(0);buildWCats();buildPCats();stats();
+(function(){
+  const tab=new URLSearchParams(location.search).get('tab');
+  if(tab==='words'||tab==='phrases')goTo(tab);
+})();
+
+/* ───────────────────────── PWA: install, update, offline ───────────────────────── */
+const APP_VERSION='2026-06-22.1';
+
+function pwaToast({icon='ℹ️',msg,actionLabel,onAction,sticky=false,offline=false,timeout=4200}){
+  const wrap=document.getElementById('pwa-toast-wrap');
+  const t=document.createElement('div');
+  t.className='pwa-toast'+(offline?' offline':'');
+  t.innerHTML=`<span class="ico">${icon}</span><span class="msg">${msg}</span>`;
+  if(actionLabel){
+    const b=document.createElement('button');b.className='act';b.textContent=actionLabel;
+    b.onclick=()=>{onAction&&onAction();t.remove()};
+    t.appendChild(b);
+  }
+  const dis=document.createElement('button');dis.className='dis';dis.textContent='✕';dis.onclick=()=>t.remove();
+  t.appendChild(dis);
+  wrap.appendChild(t);
+  if(!sticky)setTimeout(()=>t.remove(),timeout);
+  return t;
+}
+
+/* Service worker registration + update lifecycle */
+let swReg=null;
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('sw.js').then(reg=>{
+      swReg=reg;
+      if(reg.waiting)promptUpdate(reg);
+      reg.addEventListener('updatefound',()=>{
+        const nw=reg.installing;
+        if(!nw)return;
+        nw.addEventListener('statechange',()=>{
+          if(nw.state==='installed'){
+            if(navigator.serviceWorker.controller)promptUpdate(reg);
+          }
+        });
+      });
+      setInterval(()=>reg.update().catch(()=>{}),60*60*1000);
+      document.addEventListener('visibilitychange',()=>{
+        if(document.visibilityState==='visible')reg.update().catch(()=>{});
+      });
+    }).catch(err=>console.warn('SW registration failed:',err));
+
+    let refreshing=false;
+    navigator.serviceWorker.addEventListener('controllerchange',()=>{
+      if(refreshing)return;
+      refreshing=true;
+      window.location.reload();
+    });
+  });
+}
+
+let updateToastShown=false;
+function promptUpdate(reg){
+  if(updateToastShown)return;
+  updateToastShown=true;
+  pwaToast({
+    icon:'✨',msg:'A new version of Learn Greek is ready.',actionLabel:'Reload',sticky:true,
+    onAction:()=>{
+      if(reg.waiting)reg.waiting.postMessage('SKIP_WAITING');
+    }
+  });
+}
+
+function pwaCheckForUpdates(manual){
+  const btn=document.getElementById('update-check-btn');
+  if(!('serviceWorker' in navigator)){
+    if(manual)pwaToast({icon:'⚠️',msg:'Service workers aren\'t supported in this browser.'});
+    return;
+  }
+  btn.classList.add('spin');
+  navigator.serviceWorker.getRegistration().then(reg=>{
+    if(!reg){btn.classList.remove('spin');if(manual)pwaToast({icon:'⚠️',msg:'No service worker registered yet.'});return;}
+    reg.update().then(()=>{
+      btn.classList.remove('spin');
+      setTimeout(()=>{
+        if(reg.waiting){promptUpdate(reg);}
+        else if(manual){pwaToast({icon:'✓',msg:`You're up to date (v${APP_VERSION}).`});}
+      },600);
+    }).catch(()=>{
+      btn.classList.remove('spin');
+      if(manual)pwaToast({icon:'⚠️',msg:'Could not check for updates — check your connection.'});
+    });
+  });
+}
+
+/* Install prompt (beforeinstallprompt) */
+let deferredInstall=null;
+window.addEventListener('beforeinstallprompt',(e)=>{
+  e.preventDefault();
+  deferredInstall=e;
+  document.getElementById('install-btn').classList.add('show');
+});
+function pwaInstall(){
+  if(!deferredInstall)return;
+  deferredInstall.prompt();
+  deferredInstall.userChoice.finally(()=>{
+    deferredInstall=null;
+    document.getElementById('install-btn').classList.remove('show');
+  });
+}
+window.addEventListener('appinstalled',()=>{
+  document.getElementById('install-btn').classList.remove('show');
+  pwaToast({icon:'🎉',msg:'Learn Greek installed! Find it on your home screen / app launcher.'});
+});
+
+/* Offline / online indicator */
+let offlineToast=null;
+function pwaNetStatus(){
+  if(!navigator.onLine){
+    if(!offlineToast)offlineToast=pwaToast({icon:'📡',msg:'You\'re offline — already-visited pages still work.',sticky:true,offline:true});
+  }else if(offlineToast){
+    offlineToast.remove();offlineToast=null;
+    pwaToast({icon:'✓',msg:'Back online.'});
+  }
+}
+window.addEventListener('online',pwaNetStatus);
+window.addEventListener('offline',pwaNetStatus);
+if(!navigator.onLine)pwaNetStatus();
 </script>
-</body>
-</html>
+</body></html>

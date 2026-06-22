@@ -1,0 +1,47 @@
+{
+  "name": "Ελληνικά — Learn Greek",
+  "short_name": "Learn Greek",
+  "description": "Learn the Greek alphabet, 1000 common words, and essential phrases — works offline.",
+  "id": "/learn-greek/",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "browser"],
+  "background_color": "#12141a",
+  "theme_color": "#12141a",
+  "orientation": "portrait-primary",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": ["education", "lifestyle"],
+  "icons": [
+    { "src": "icons/favicon-16.png", "sizes": "16x16", "type": "image/png" },
+    { "src": "icons/favicon-32.png", "sizes": "32x32", "type": "image/png" },
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    {
+      "name": "Alphabet",
+      "short_name": "Alphabet",
+      "description": "Jump straight to the Greek alphabet",
+      "url": "./index.html?tab=alphabet",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "1000 Words",
+      "short_name": "Words",
+      "description": "Jump straight to the word list",
+      "url": "./index.html?tab=words",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Essential Phrases",
+      "short_name": "Phrases",
+      "description": "Jump straight to essential phrases",
+      "url": "./index.html?tab=phrases",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}
