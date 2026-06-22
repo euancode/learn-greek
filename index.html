@@ -4,6 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ελληνικά — Learn Greek</title>
+<meta name="description" content="Learn the Greek alphabet, 1000 common words, and essential phrases — works offline.">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#12141a">
+<meta name="color-scheme" content="dark">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Learn Greek">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cardo:ital@0;1&family=Fira+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -187,6 +198,26 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   .modal-cells{grid-template-columns:repeat(2,1fr)}
   .words-grid{grid-template-columns:repeat(auto-fill,minmax(136px,1fr))}
 }
+
+/* PWA: install + update controls */
+.pwa-btn{background:var(--surface);border:1px solid var(--border);color:var(--gold);width:26px;height:26px;border-radius:7px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.85rem;transition:all .15s;flex-shrink:0}
+.pwa-btn:hover{background:var(--gold);color:#111;border-color:var(--gold)}
+.pwa-btn.spin svg{animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.install-btn{display:none;background:var(--gold);color:#111;border:none;font-family:'Cardo',serif;font-weight:bold;font-size:.78rem;padding:6px 13px;border-radius:7px;cursor:pointer;letter-spacing:.03em;white-space:nowrap;flex-shrink:0}
+.install-btn:hover{background:var(--gold-light)}
+.install-btn.show{display:inline-flex;align-items:center;gap:5px}
+
+.pwa-toast-wrap{position:fixed;left:0;right:0;bottom:18px;display:flex;flex-direction:column;align-items:center;gap:8px;z-index:300;pointer-events:none}
+.pwa-toast{pointer-events:auto;max-width:min(92vw,420px);background:var(--card);border:1px solid rgba(214,169,58,.3);border-radius:12px;padding:11px 14px;display:flex;align-items:center;gap:10px;box-shadow:0 8px 30px rgba(0,0,0,.4);font-family:'Cardo',serif;font-size:.85rem;color:var(--white);animation:tIn .25s cubic-bezier(.4,0,.2,1)}
+@keyframes tIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.pwa-toast.offline{border-color:rgba(255,255,255,.12);color:var(--muted)}
+.pwa-toast .ico{flex-shrink:0;font-size:1rem}
+.pwa-toast .msg{flex:1;line-height:1.3}
+.pwa-toast .act{background:var(--gold);color:#111;border:none;font-family:'Cardo',serif;font-weight:bold;font-size:.78rem;padding:6px 13px;border-radius:7px;cursor:pointer;white-space:nowrap;flex-shrink:0}
+.pwa-toast .act:hover{background:var(--gold-light)}
+.pwa-toast .dis{background:none;border:none;color:var(--muted);cursor:pointer;font-size:.95rem;padding:2px 4px;flex-shrink:0}
+.pwa-toast .dis:hover{color:var(--white)}
 </style>
 </head>
 <body>
@@ -202,9 +233,14 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
       <span class="stat-badge" id="s-lbl">0 / 0</span>
       <div class="mini-bar"><div class="mini-bar-fill" id="s-bar" style="width:0%"></div></div>
       <span class="stat-pct" id="s-pct">0%</span>
+      <button class="install-btn" id="install-btn" title="Install Learn Greek as an app" onclick="pwaInstall()">⤓ Install</button>
+      <button class="pwa-btn" id="update-check-btn" title="Check for updates" onclick="pwaCheckForUpdates(true)">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+      </button>
     </div>
   </div>
 </nav>
+<div class="pwa-toast-wrap" id="pwa-toast-wrap"></div>
 <div class="section active" id="sec-alphabet">
   <div class="alpha-header">
     <div class="alpha-title">Ελληνικό Αλφάβητο</div>
@@ -1055,5 +1091,128 @@ function renderP(){
 
 /* INIT */
 buildDots();buildChart();renderLetter(0);buildWCats();buildPCats();stats();
+(function(){
+  const tab=new URLSearchParams(location.search).get('tab');
+  if(tab==='words'||tab==='phrases')goTo(tab);
+})();
+
+/* ───────────────────────── PWA: install, update, offline ───────────────────────── */
+const APP_VERSION='2026-06-22.1';
+
+function pwaToast({icon='ℹ️',msg,actionLabel,onAction,sticky=false,offline=false,timeout=4200}){
+  const wrap=document.getElementById('pwa-toast-wrap');
+  const t=document.createElement('div');
+  t.className='pwa-toast'+(offline?' offline':'');
+  t.innerHTML=`<span class="ico">${icon}</span><span class="msg">${msg}</span>`;
+  if(actionLabel){
+    const b=document.createElement('button');b.className='act';b.textContent=actionLabel;
+    b.onclick=()=>{onAction&&onAction();t.remove()};
+    t.appendChild(b);
+  }
+  const dis=document.createElement('button');dis.className='dis';dis.textContent='✕';dis.onclick=()=>t.remove();
+  t.appendChild(dis);
+  wrap.appendChild(t);
+  if(!sticky)setTimeout(()=>t.remove(),timeout);
+  return t;
+}
+
+/* Service worker registration + update lifecycle */
+let swReg=null;
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('sw.js').then(reg=>{
+      swReg=reg;
+      if(reg.waiting)promptUpdate(reg);
+      reg.addEventListener('updatefound',()=>{
+        const nw=reg.installing;
+        if(!nw)return;
+        nw.addEventListener('statechange',()=>{
+          if(nw.state==='installed'){
+            if(navigator.serviceWorker.controller)promptUpdate(reg);
+          }
+        });
+      });
+      setInterval(()=>reg.update().catch(()=>{}),60*60*1000);
+      document.addEventListener('visibilitychange',()=>{
+        if(document.visibilityState==='visible')reg.update().catch(()=>{});
+      });
+    }).catch(err=>console.warn('SW registration failed:',err));
+
+    let refreshing=false;
+    navigator.serviceWorker.addEventListener('controllerchange',()=>{
+      if(refreshing)return;
+      refreshing=true;
+      window.location.reload();
+    });
+  });
+}
+
+let updateToastShown=false;
+function promptUpdate(reg){
+  if(updateToastShown)return;
+  updateToastShown=true;
+  pwaToast({
+    icon:'✨',msg:'A new version of Learn Greek is ready.',actionLabel:'Reload',sticky:true,
+    onAction:()=>{
+      if(reg.waiting)reg.waiting.postMessage('SKIP_WAITING');
+    }
+  });
+}
+
+function pwaCheckForUpdates(manual){
+  const btn=document.getElementById('update-check-btn');
+  if(!('serviceWorker' in navigator)){
+    if(manual)pwaToast({icon:'⚠️',msg:'Service workers aren\'t supported in this browser.'});
+    return;
+  }
+  btn.classList.add('spin');
+  navigator.serviceWorker.getRegistration().then(reg=>{
+    if(!reg){btn.classList.remove('spin');if(manual)pwaToast({icon:'⚠️',msg:'No service worker registered yet.'});return;}
+    reg.update().then(()=>{
+      btn.classList.remove('spin');
+      setTimeout(()=>{
+        if(reg.waiting){promptUpdate(reg);}
+        else if(manual){pwaToast({icon:'✓',msg:`You're up to date (v${APP_VERSION}).`});}
+      },600);
+    }).catch(()=>{
+      btn.classList.remove('spin');
+      if(manual)pwaToast({icon:'⚠️',msg:'Could not check for updates — check your connection.'});
+    });
+  });
+}
+
+/* Install prompt (beforeinstallprompt) */
+let deferredInstall=null;
+window.addEventListener('beforeinstallprompt',(e)=>{
+  e.preventDefault();
+  deferredInstall=e;
+  document.getElementById('install-btn').classList.add('show');
+});
+function pwaInstall(){
+  if(!deferredInstall)return;
+  deferredInstall.prompt();
+  deferredInstall.userChoice.finally(()=>{
+    deferredInstall=null;
+    document.getElementById('install-btn').classList.remove('show');
+  });
+}
+window.addEventListener('appinstalled',()=>{
+  document.getElementById('install-btn').classList.remove('show');
+  pwaToast({icon:'🎉',msg:'Learn Greek installed! Find it on your home screen / app launcher.'});
+});
+
+/* Offline / online indicator */
+let offlineToast=null;
+function pwaNetStatus(){
+  if(!navigator.onLine){
+    if(!offlineToast)offlineToast=pwaToast({icon:'📡',msg:'You\'re offline — already-visited pages still work.',sticky:true,offline:true});
+  }else if(offlineToast){
+    offlineToast.remove();offlineToast=null;
+    pwaToast({icon:'✓',msg:'Back online.'});
+  }
+}
+window.addEventListener('online',pwaNetStatus);
+window.addEventListener('offline',pwaNetStatus);
+if(!navigator.onLine)pwaNetStatus();
 </script>
 </body></html>
