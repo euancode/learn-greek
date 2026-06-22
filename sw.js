@@ -1,6 +1,6 @@
 // Bump VERSION on every deploy that changes cached assets — this is what
 // makes the browser notice the service worker file changed and re-install it.
-const VERSION = '2026-06-22.1';
+const VERSION = '2026-06-22.2';
 const CACHE_NAME = `greek-app-${VERSION}`;
 
 const CORE_ASSETS = [
